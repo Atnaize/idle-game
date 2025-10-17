@@ -70,16 +70,40 @@ export abstract class Entity {
  * Resource Entity - Collectable/spendable game resources
  */
 export class Resource extends Entity {
-  protected amount: BigNumber;
+  private _amount: BigNumber;
   maxAmount: BigNumber | null;
   color: string;
 
   constructor(id: string, config: ResourceConfig) {
     super(id, config, 'resource');
 
-    this.amount = BigNumber.from(config.amount || 0);
+    this._amount = BigNumber.from(config.amount || 0);
     this.maxAmount = config.maxAmount ? BigNumber.from(config.maxAmount) : null;
     this.color = config.color || '#ffffff';
+  }
+
+  /**
+   * Get current amount (returns copy for immutability)
+   */
+  get amount(): BigNumber {
+    return new BigNumber(this._amount);
+  }
+
+  /**
+   * Set amount (automatically clamps to max if applicable)
+   */
+  set amount(value: BigNumber) {
+    this._amount = this.clampToMax(value);
+  }
+
+  /**
+   * Clamp value to max amount if applicable
+   */
+  private clampToMax(value: BigNumber): BigNumber {
+    if (this.maxAmount && value.gt(this.maxAmount)) {
+      return new BigNumber(this.maxAmount);
+    }
+    return value;
   }
 
   /**
@@ -87,15 +111,15 @@ export class Resource extends Entity {
    */
   add(amount: BigNumber | number | string): BigNumber {
     const value = BigNumber.from(amount);
-    const newAmount = this.amount.earn(value);
+    const newAmount = this._amount.earn(value);
 
     if (this.maxAmount && newAmount.gt(this.maxAmount)) {
-      const actualAdded = this.maxAmount.sub(this.amount);
-      this.amount = new BigNumber(this.maxAmount);
+      const actualAdded = this.maxAmount.sub(this._amount);
+      this._amount = new BigNumber(this.maxAmount);
       return actualAdded;
     }
 
-    this.amount = newAmount;
+    this._amount = newAmount;
     return value;
   }
 
@@ -109,7 +133,7 @@ export class Resource extends Entity {
       return false;
     }
 
-    this.amount = this.amount.spend(value);
+    this._amount = this._amount.spend(value);
     return true;
   }
 
@@ -117,24 +141,7 @@ export class Resource extends Entity {
    * Check if can afford cost
    */
   canAfford(cost: BigNumber | number | string): boolean {
-    return this.amount.canAfford(cost);
-  }
-
-  /**
-   * Set amount (useful for debugging)
-   */
-  setAmount(amount: BigNumber | number | string): void {
-    this.amount = BigNumber.from(amount);
-    if (this.maxAmount && this.amount.gt(this.maxAmount)) {
-      this.amount = new BigNumber(this.maxAmount);
-    }
-  }
-
-  /**
-   * Get current amount
-   */
-  getAmount(): BigNumber {
-    return new BigNumber(this.amount);
+    return this._amount.canAfford(cost);
   }
 
   /**
@@ -144,7 +151,7 @@ export class Resource extends Entity {
     if (!this.maxAmount) {
       return false;
     }
-    return this.amount.gte(this.maxAmount);
+    return this._amount.gte(this.maxAmount);
   }
 
   /**
@@ -154,19 +161,19 @@ export class Resource extends Entity {
     if (!this.maxAmount) {
       return BigNumber.zero();
     }
-    return this.amount.percentOf(this.maxAmount);
+    return this._amount.percentOf(this.maxAmount);
   }
 
   serialize(): SerializedData {
     return {
       ...super.serialize(),
-      amount: this.amount.serialize(),
+      amount: this._amount.serialize(),
     };
   }
 
   static deserialize(data: SerializedData, config: ResourceConfig): Resource {
     const resource = new Resource(data.id, config);
-    resource.amount = BigNumber.deserialize(data.amount);
+    resource._amount = BigNumber.deserialize(data.amount);
     resource.unlocked = data.unlocked;
     resource.visible = data.visible;
     return resource;

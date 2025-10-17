@@ -46,7 +46,7 @@ export class Prestige {
       return false;
     }
 
-    return currency.getAmount().gte(this.minRequirement);
+    return currency.amount.gte(this.minRequirement);
   }
 
   /**
@@ -58,7 +58,7 @@ export class Prestige {
       return BigNumber.zero();
     }
 
-    const amount = currency.getAmount();
+    const amount = currency.amount;
     if (amount.lt(this.minRequirement)) {
       return BigNumber.zero();
     }
@@ -112,7 +112,7 @@ export class Prestige {
     // Reset resources
     for (const [id, resource] of Object.entries(gameState.resources)) {
       newState.resources[id] = resource.clone();
-      newState.resources[id].setAmount(0);
+      newState.resources[id].amount = BigNumber.zero();
     }
 
     // Reset producers (keep specified ones)

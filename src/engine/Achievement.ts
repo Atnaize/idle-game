@@ -167,7 +167,7 @@ export class MilestoneAchievement extends Achievement {
 
   checkCondition(context: GameContext): boolean {
     const resource = context.resources[this.resourceId];
-    return resource && resource.getAmount().gte(this.targetAmount);
+    return resource && resource.amount.gte(this.targetAmount);
   }
 
   updateProgress(context: GameContext): void {
@@ -177,7 +177,7 @@ export class MilestoneAchievement extends Achievement {
 
     const resource = context.resources[this.resourceId];
     if (resource) {
-      const current = resource.getAmount();
+      const current = resource.amount;
       this.progress = current.div(this.targetAmount).toNumber();
       this.progress = Math.min(this.progress, 1);
     }

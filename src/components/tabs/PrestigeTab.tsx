@@ -23,7 +23,7 @@ export function PrestigeTab() {
   const nextMultiplier = currentPoints.add(pointsGain).mul(prestige.bonusPerPoint).add(1);
 
   const oreResource = engine.resources[prestige.currencyId];
-  const currentOre = oreResource?.getAmount();
+  const currentOre = oreResource?.amount;
 
   const handlePrestige = () => {
     if (!canPrestige) {

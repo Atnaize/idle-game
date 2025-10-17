@@ -21,7 +21,7 @@ export function ResourceDisplay() {
 
       <div className="relative z-10">
         {resources.map((resource) => {
-          const amount = resource.getAmount();
+          const amount = resource.amount;
           const maxAmount = resource.maxAmount;
           const percentFull = maxAmount ? resource.getPercentFull().toNumber() : 0;
           const isFull = percentFull >= 100;

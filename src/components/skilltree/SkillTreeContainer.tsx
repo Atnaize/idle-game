@@ -48,7 +48,7 @@ export const SkillTreeContainer = memo(() => {
 
   Object.values(engine.resources).forEach((resource) => {
     resources[resource.id] = {
-      amount: resource.getAmount().toNumber(),
+      amount: resource.amount.toNumber(),
     };
   });
 
