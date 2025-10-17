@@ -2,7 +2,7 @@ import { BigNumber } from '@engine/BigNumber';
 import { Ore } from '@engine/resources';
 import { Miner, Drill, Complex, QuantumDevice } from '@engine/producers';
 import { Upgrade } from '@engine/Producer';
-import { MilestoneAchievement, ProductionAchievement, PurchaseAchievement } from '@engine/Achievement';
+import { MilestoneAchievement, PurchaseAchievement } from '@engine/Achievement';
 import { ClickPower, ClickUpgrade } from '@engine/ClickPower';
 import { Prestige } from '@engine/Prestige';
 import { Formulas } from '@utils/Formulas';

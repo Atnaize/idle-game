@@ -15,9 +15,9 @@ export function SettingsMenu() {
   const giveDebugCredits = () => {
     if (!engine) return;
 
-    // Give 1 million of each resource
+    // Give 1 trillion of each resource
     Object.values(engine.resources).forEach(resource => {
-      resource.add(BigNumber.fromNumber(1000000000000));
+      resource.add(BigNumber.from(1000000000000));
     });
 
     // Don't close the menu - let user add more if needed

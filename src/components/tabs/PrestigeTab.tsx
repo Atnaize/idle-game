@@ -92,10 +92,19 @@ export function PrestigeTab() {
       </SectionCard>
 
       <SectionCard>
-        <h3 className="text-white font-bold mb-2">What happens on prestige?</h3>
+        <h3 className="text-white font-bold mb-2">How Prestige Points Work</h3>
+        <div className="tech-card bg-helix-purple bg-opacity-10 p-3 border-2 border-helix-purple mb-3">
+          <p className="text-white text-sm font-semibold mb-1">💡 PP Formula</p>
+          <p className="text-secondary text-xs">
+            PP gained = √(Total Ore / {NumberFormatter.format(prestige.minRequirement)})
+          </p>
+          <p className="text-tertiary text-xs mt-1">
+            More ore = exponentially more PP!
+          </p>
+        </div>
         <ul className="text-secondary text-sm space-y-1">
-          <li>✓ Gain Prestige Points based on current ore</li>
-          <li>✓ Each point gives +{(prestige.bonusPerPoint * 100).toFixed(0)}% production</li>
+          <li>✓ Gain PP based on total ore collected</li>
+          <li>✓ Each PP gives +{(prestige.bonusPerPoint * 100).toFixed(0)}% permanent production boost</li>
           <li>✓ Keep all achievements</li>
           <li>✗ Reset all resources to 0</li>
           <li>✗ Reset all producers to level 0</li>

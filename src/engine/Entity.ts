@@ -43,6 +43,9 @@ export abstract class Entity {
    */
   tick(deltaTime: number, context: GameContext): void {
     // Override in subclass
+    // Base implementation doesn't use these, but subclasses do
+    void deltaTime;
+    void context;
   }
 
   /**

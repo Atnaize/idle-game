@@ -10,7 +10,7 @@ import {
   createClickUpgrades,
   createPrestige,
 } from '@config/gameData';
-import type { BuyAmount, ResourceId, ProducerId, UpgradeId } from '@/types/core';
+import type { BuyAmount, ProducerId, UpgradeId } from '@/types/core';
 import { BigNumber } from '@engine/BigNumber';
 
 interface GameState {
@@ -60,7 +60,7 @@ export const useGameStore = create<GameState>()(
           return;
         }
 
-        console.log('Initializing game...');
+        // Initialize game engine
 
         // Create engine
         const engine = new GameEngine({
@@ -117,7 +117,7 @@ export const useGameStore = create<GameState>()(
           get().forceTick();
         }, 100); // Update UI 10 times per second
 
-        console.log('Game initialized successfully!');
+        // Game initialization complete
       },
 
       // UI Actions
@@ -204,7 +204,7 @@ export const useGameStore = create<GameState>()(
 
         const saveData = engine.serialize();
         localStorage.setItem('idle-game-save', JSON.stringify(saveData));
-        console.log('Game saved!');
+        // Game saved to localStorage
       },
 
       loadGame: () => {
@@ -216,7 +216,7 @@ export const useGameStore = create<GameState>()(
 
           // For now, we'll handle loading on next initialization
           // Full deserialization would require factories for each class type
-          console.log('Save data found, but deserialization not yet implemented');
+          // Save data found, but deserialization not yet implemented
         } catch (error) {
           console.error('Failed to load game:', error);
         }

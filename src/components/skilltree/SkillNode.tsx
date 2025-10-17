@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import './SkillNode.css';
 
 export interface SkillNodeProps {
@@ -21,7 +21,6 @@ export interface SkillNodeProps {
 }
 
 export const SkillNode = memo<SkillNodeProps>(({
-  id,
   name,
   description,
   icon,
@@ -35,7 +34,6 @@ export const SkillNode = memo<SkillNodeProps>(({
   unlocked,
   canAfford,
   prerequisitesMet,
-  purchased,
   onPurchase,
 }) => {
   const isMaxed = level >= maxLevel;
@@ -70,7 +68,7 @@ export const SkillNode = memo<SkillNodeProps>(({
     }
 
     return entries
-      .map(([resource, amount]) => {
+      .map(([, amount]) => {
         if (amount >= 1000000) {
           return `${(amount / 1000000).toFixed(1)}M`;
         }

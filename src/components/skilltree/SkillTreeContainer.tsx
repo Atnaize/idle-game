@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { SkillTree } from './SkillTree';
 
@@ -8,7 +8,7 @@ import { SkillTree } from './SkillTree';
 export const SkillTreeContainer = memo(() => {
   const engine = useGameStore((state) => state.engine);
   const purchaseUpgrade = useGameStore((state) => state.purchaseUpgrade);
-  const tick = useGameStore((state) => state.tick); // Force re-render
+  useGameStore((state) => state.tick); // Force re-render on tick
 
   if (!engine) {
     return (
@@ -48,7 +48,7 @@ export const SkillTreeContainer = memo(() => {
 
   Object.values(engine.resources).forEach((resource) => {
     resources[resource.id] = {
-      amount: resource.amount.toNumber(),
+      amount: resource.getAmount().toNumber(),
     };
   });
 

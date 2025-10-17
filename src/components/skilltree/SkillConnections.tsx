@@ -1,6 +1,5 @@
-import React, { memo } from 'react';
-import { SKILL_CONNECTIONS } from './SkillTreeData';
-import type { SkillNodePosition } from './SkillTreeData';
+import { memo } from 'react';
+import { SKILL_CONNECTIONS, type SkillNodePosition } from './SkillTreeData';
 import './SkillConnections.css';
 
 interface SkillConnectionsProps {

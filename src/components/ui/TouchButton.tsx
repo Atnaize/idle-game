@@ -48,14 +48,14 @@ export function TouchButton({
   );
 
   // Prevent touch delay and double-tap zoom
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLButtonElement>) => {
+  const handleTouchStart = useCallback(() => {
     // Prevent 300ms delay on mobile
     if (buttonRef.current) {
       buttonRef.current.style.transform = 'scale(0.95)';
     }
   }, []);
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLButtonElement>) => {
+  const handleTouchEnd = useCallback(() => {
     if (buttonRef.current) {
       buttonRef.current.style.transform = '';
     }

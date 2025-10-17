@@ -5,7 +5,6 @@ import type {
   ProducerId,
   UpgradeId,
   AchievementId,
-  Cost,
   SaveData,
   GameStats,
 } from '@/types/core';
@@ -237,8 +236,6 @@ export class GameEngine {
    * Generate resources from producers
    */
   private produceResources(deltaTime: number): void {
-    const context = this.getGameContext();
-
     Object.values(this.producers).forEach((producer) => {
       if (producer.level === 0) {
         return;
@@ -397,7 +394,7 @@ export class GameEngine {
     // Simulate production at current rates
     this.produceResources(effectiveTime);
 
-    console.log(`Calculated offline progress for ${effectiveTime}s`);
+    // Offline progress calculation complete
   }
 
   /**

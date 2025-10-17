@@ -30,6 +30,8 @@ export class Achievement extends Entity {
    */
   checkCondition(context: GameContext): boolean {
     // Override in subclass
+    // Base implementation doesn't use context, but subclasses do
+    void context; // Explicitly mark as intentionally unused
     return false;
   }
 
@@ -207,6 +209,7 @@ export class ProductionAchievement extends Achievement {
   }
 
   checkCondition(context: GameContext): boolean {
+    void context; // Not needed for production achievements
     return this.totalProduced.gte(this.targetAmount);
   }
 

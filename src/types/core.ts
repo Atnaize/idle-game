@@ -73,8 +73,9 @@ export interface UpgradeConfig extends PurchasableConfig {
 }
 
 export interface UpgradeTarget {
-  type: 'producer' | 'all_producers' | 'resource' | 'click' | 'prestige';
+  type: 'producer' | 'all_producers' | 'resource' | 'click' | 'prestige' | 'category';
   id?: string;
+  category?: string;
 }
 
 export interface AchievementConfig extends EntityConfig {

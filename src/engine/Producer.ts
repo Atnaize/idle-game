@@ -7,10 +7,8 @@ import type {
   GameContext,
   UnlockCondition,
   SerializedData,
-  Cost,
   UpgradeTarget,
 } from '@/types/core';
-import type { Resource } from './Entity';
 
 /**
  * Producer Entity - Generates resources over time

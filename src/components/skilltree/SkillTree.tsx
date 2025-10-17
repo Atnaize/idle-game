@@ -1,4 +1,4 @@
-import React, { memo, useRef, useEffect, useState } from 'react';
+import { memo, useRef, useEffect, useState } from 'react';
 import { SkillNode } from './SkillNode';
 import { SkillConnections } from './SkillConnections';
 import { SKILL_TREE_LAYOUT, arePrerequisitesMet } from './SkillTreeData';
