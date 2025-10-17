@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { NumberFormatter } from '@utils/NumberFormatter';
 import './SkillNode.css';
 
 export interface SkillNodeProps {
@@ -68,17 +69,7 @@ export const SkillNode = memo<SkillNodeProps>(({
     }
 
     return entries
-      .map(([, amount]) => {
-        if (amount >= 1000000) {
-          return `${(amount / 1000000).toFixed(1)}M`;
-        }
-
-        if (amount >= 1000) {
-          return `${(amount / 1000).toFixed(1)}K`;
-        }
-
-        return amount.toString();
-      })
+      .map(([, amount]) => NumberFormatter.formatCompact(amount))
       .join(' / ');
   };
 

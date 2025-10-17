@@ -1,4 +1,5 @@
 import type { Achievement } from '@engine/Achievement';
+import { NumberFormatter } from '@utils/NumberFormatter';
 
 interface AchievementCardProps {
   achievement: Achievement;
@@ -32,7 +33,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
               <div className="mb-2">
                 <div className="flex justify-between text-xs text-tertiary mb-1">
                   <span>Progress</span>
-                  <span>{progressPercent.toFixed(1)}%</span>
+                  <span>{NumberFormatter.formatPercent(progress, 1)}</span>
                 </div>
                 <div className="tech-progress">
                   <div

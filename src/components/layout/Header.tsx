@@ -1,4 +1,5 @@
 import { useGameStore } from '@store/gameStore';
+import { NumberFormatter } from '@utils/NumberFormatter';
 import { SettingsMenu } from './SettingsMenu';
 
 export function Header() {
@@ -28,10 +29,10 @@ export function Header() {
           {prestigePoints.gt(0) && (
             <div className="text-right bg-helix-purple bg-opacity-20 rounded-lg px-3 py-1 border-2 border-helix-purple shadow-glow-purple backdrop-blur-sm hex-badge--purple">
               <div className="text-base font-bold tech-text-glow--purple">
-                {prestigePoints.toFixed(0)} PP
+                {NumberFormatter.format(prestigePoints, 0)} PP
               </div>
               <div className="text-xs opacity-80">
-                {prestigeMultiplier.toFixed(2)}x boost
+                {prestigeMultiplier.toNumber().toFixed(2)}x boost
               </div>
             </div>
           )}

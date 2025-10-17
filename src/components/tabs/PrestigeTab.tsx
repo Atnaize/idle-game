@@ -54,7 +54,7 @@ export function PrestigeTab() {
 
           <StatCard
             label="Current Multiplier"
-            value={`${currentMultiplier.toFixed(2)}x`}
+            value={`${currentMultiplier.toNumber().toFixed(2)}x`}
             borderColor="purple"
             valueClassName="text-2xl font-bold tech-text-glow--blue"
           />
@@ -62,7 +62,7 @@ export function PrestigeTab() {
           <StatCard
             label="On Prestige, Gain"
             value={`+${NumberFormatter.format(pointsGain)} PP`}
-            sublabel={pointsGain.gt(0) ? `→ ${nextMultiplier.toFixed(2)}x multiplier` : undefined}
+            sublabel={pointsGain.gt(0) ? `→ ${nextMultiplier.toNumber().toFixed(2)}x multiplier` : undefined}
             borderColor="blue"
             valueClassName="text-2xl font-bold tech-text-glow--blue"
           />
@@ -104,7 +104,7 @@ export function PrestigeTab() {
         </div>
         <ul className="text-secondary text-sm space-y-1">
           <li>✓ Gain PP based on total ore collected</li>
-          <li>✓ Each PP gives +{(prestige.bonusPerPoint * 100).toFixed(0)}% permanent production boost</li>
+          <li>✓ Each PP gives +{NumberFormatter.formatPercent(prestige.bonusPerPoint, 0)} permanent production boost</li>
           <li>✓ Keep all achievements</li>
           <li>✗ Reset all resources to 0</li>
           <li>✗ Reset all producers to level 0</li>
@@ -134,7 +134,7 @@ export function PrestigeTab() {
             <div className="tech-card bg-helix-blue bg-opacity-20 p-3 border-2 border-helix-blue">
               <p className="text-secondary text-xs mb-1">New multiplier</p>
               <p className="text-white font-bold text-xl tech-text-glow--blue">
-                {currentMultiplier.toFixed(2)}x → {nextMultiplier.toFixed(2)}x
+                {currentMultiplier.toNumber().toFixed(2)}x → {nextMultiplier.toNumber().toFixed(2)}x
               </p>
             </div>
           </div>

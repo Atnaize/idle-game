@@ -91,7 +91,7 @@ export function ClickArea() {
           +{NumberFormatter.format(clickValue)}
           {hasCritChance && (
             <span className="ml-1.5 opacity-90">
-              ({(critChance * 100).toFixed(0)}% crit {critMultiplier.toFixed(1)}x)
+              ({NumberFormatter.formatPercent(critChance, 0)} crit {critMultiplier.toFixed(1)}x)
             </span>
           )}
         </div>
