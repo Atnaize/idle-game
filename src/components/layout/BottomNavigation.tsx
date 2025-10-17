@@ -1,13 +1,14 @@
 import { useGameStore } from '@store/gameStore';
+import { TABS } from '@/config';
 
 export function BottomNavigation() {
   const { selectedTab, setSelectedTab } = useGameStore();
 
   const tabs = [
-    { id: 'producers' as const, label: 'Producers', icon: '⚙️' },
-    { id: 'skilltree' as const, label: 'Tech Tree', icon: '⚛️' },
-    { id: 'achievements' as const, label: 'Achievements', icon: '🏆' },
-    { id: 'prestige' as const, label: 'Prestige', icon: '✨' },
+    { id: TABS.PRODUCERS, label: 'Producers', icon: '⚙️' },
+    { id: TABS.SKILLTREE, label: 'Tech Tree', icon: '⚛️' },
+    { id: TABS.ACHIEVEMENTS, label: 'Achievements', icon: '🏆' },
+    { id: TABS.PRESTIGE, label: 'Prestige', icon: '✨' },
   ];
 
   return (

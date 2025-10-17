@@ -9,7 +9,9 @@ import {
   createClickPower,
   createClickUpgrades,
   createPrestige,
-} from '@config/gameData';
+  TABS,
+  type TabId,
+} from '@/config';
 import type { BuyAmount, ProducerId, UpgradeId } from '@/types/core';
 import { BigNumber } from '@engine/BigNumber';
 
@@ -19,7 +21,7 @@ interface GameState {
 
   // UI state
   buyAmount: BuyAmount;
-  selectedTab: 'producers' | 'skilltree' | 'achievements' | 'prestige' | 'settings';
+  selectedTab: TabId;
 
   // Initialization
   initialized: boolean;
@@ -27,7 +29,7 @@ interface GameState {
 
   // Actions
   setBuyAmount: (amount: BuyAmount) => void;
-  setSelectedTab: (tab: 'producers' | 'skilltree' | 'achievements' | 'prestige') => void;
+  setSelectedTab: (tab: TabId) => void;
   handleClick: () => { amount: BigNumber; wasCrit: boolean };
   purchaseProducer: (producerId: ProducerId, amount?: number) => boolean;
   purchaseUpgrade: (upgradeId: UpgradeId) => boolean;
@@ -49,7 +51,7 @@ export const useGameStore = create<GameState>()(
       // Initial state
       engine: null,
       buyAmount: 1,
-      selectedTab: 'producers',
+      selectedTab: TABS.PRODUCERS,
       initialized: false,
       tick: 0,
 

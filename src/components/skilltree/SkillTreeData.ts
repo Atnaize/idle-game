@@ -3,6 +3,8 @@
  * Defines positioning and connections for tech tree visualization
  */
 
+import { CLICK_UPGRADES, UPGRADES } from '@/config';
+
 export interface SkillNodePosition {
   id: string;
   x: number; // 0-100 (percentage)
@@ -19,97 +21,97 @@ export interface SkillNodePosition {
 export const SKILL_TREE_LAYOUT: SkillNodePosition[] = [
   // === CLICK PATH (Left helix strand) ===
   {
-    id: 'clickPower1',
+    id: CLICK_UPGRADES.CLICK_POWER_1,
     x: 15,
     y: 20,
     tier: 1,
     category: 'click',
   },
   {
-    id: 'critChance1',
+    id: CLICK_UPGRADES.CRIT_CHANCE_1,
     x: 10,
     y: 40,
     tier: 2,
     category: 'click',
-    prerequisites: ['clickPower1'],
+    prerequisites: [CLICK_UPGRADES.CLICK_POWER_1],
   },
   {
-    id: 'critMultiplier1',
+    id: CLICK_UPGRADES.CRIT_MULTIPLIER_1,
     x: 15,
     y: 60,
     tier: 3,
     category: 'click',
-    prerequisites: ['critChance1'],
+    prerequisites: [CLICK_UPGRADES.CRIT_CHANCE_1],
   },
 
   // === MINER PATH (Center-left) ===
   {
-    id: 'minerBoost1',
+    id: UPGRADES.MINER_BOOST_1,
     x: 35,
     y: 15,
     tier: 1,
     category: 'miner',
   },
   {
-    id: 'minerBoost2',
+    id: UPGRADES.MINER_BOOST_2,
     x: 35,
     y: 35,
     tier: 2,
     category: 'miner',
-    prerequisites: ['minerBoost1'],
+    prerequisites: [UPGRADES.MINER_BOOST_1],
   },
 
   // === GLOBAL PATH (Center) ===
   {
-    id: 'globalProduction1',
+    id: UPGRADES.GLOBAL_PRODUCTION_1,
     x: 50,
     y: 45,
     tier: 2,
     category: 'global',
-    prerequisites: ['minerBoost2'],
+    prerequisites: [UPGRADES.MINER_BOOST_2],
   },
   {
-    id: 'globalProduction2',
+    id: UPGRADES.GLOBAL_PRODUCTION_2,
     x: 50,
     y: 65,
     tier: 3,
     category: 'global',
-    prerequisites: ['globalProduction1'],
+    prerequisites: [UPGRADES.GLOBAL_PRODUCTION_1],
   },
 
   // === DRILL PATH (Right helix strand) ===
   {
-    id: 'drillEfficiency1',
+    id: UPGRADES.DRILL_EFFICIENCY_1,
     x: 70,
     y: 25,
     tier: 2,
     category: 'drill',
   },
   {
-    id: 'drillSpeed1',
+    id: UPGRADES.DRILL_SPEED_1,
     x: 75,
     y: 45,
     tier: 3,
     category: 'drill',
-    prerequisites: ['drillEfficiency1'],
+    prerequisites: [UPGRADES.DRILL_EFFICIENCY_1],
   },
   {
-    id: 'drillDepth1',
+    id: UPGRADES.DRILL_DEPTH_1,
     x: 70,
     y: 65,
     tier: 3,
     category: 'drill',
-    prerequisites: ['drillSpeed1'],
+    prerequisites: [UPGRADES.DRILL_SPEED_1],
   },
 
   // === PRESTIGE PATH (Bottom center) ===
   {
-    id: 'prestigeBonus1',
+    id: UPGRADES.PRESTIGE_BONUS_1,
     x: 50,
     y: 85,
     tier: 4,
     category: 'prestige',
-    prerequisites: ['globalProduction2', 'drillDepth1'],
+    prerequisites: [UPGRADES.GLOBAL_PRODUCTION_2, UPGRADES.DRILL_DEPTH_1],
   },
 ];
 
@@ -124,23 +126,23 @@ export interface SkillConnection {
 
 export const SKILL_CONNECTIONS: SkillConnection[] = [
   // Click path
-  { from: 'clickPower1', to: 'critChance1', type: 'curved' },
-  { from: 'critChance1', to: 'critMultiplier1', type: 'curved' },
+  { from: CLICK_UPGRADES.CLICK_POWER_1, to: CLICK_UPGRADES.CRIT_CHANCE_1, type: 'curved' },
+  { from: CLICK_UPGRADES.CRIT_CHANCE_1, to: CLICK_UPGRADES.CRIT_MULTIPLIER_1, type: 'curved' },
 
   // Miner path
-  { from: 'minerBoost1', to: 'minerBoost2', type: 'direct' },
-  { from: 'minerBoost2', to: 'globalProduction1', type: 'curved' },
+  { from: UPGRADES.MINER_BOOST_1, to: UPGRADES.MINER_BOOST_2, type: 'direct' },
+  { from: UPGRADES.MINER_BOOST_2, to: UPGRADES.GLOBAL_PRODUCTION_1, type: 'curved' },
 
   // Global path
-  { from: 'globalProduction1', to: 'globalProduction2', type: 'direct' },
+  { from: UPGRADES.GLOBAL_PRODUCTION_1, to: UPGRADES.GLOBAL_PRODUCTION_2, type: 'direct' },
 
   // Drill path
-  { from: 'drillEfficiency1', to: 'drillSpeed1', type: 'curved' },
-  { from: 'drillSpeed1', to: 'drillDepth1', type: 'curved' },
+  { from: UPGRADES.DRILL_EFFICIENCY_1, to: UPGRADES.DRILL_SPEED_1, type: 'curved' },
+  { from: UPGRADES.DRILL_SPEED_1, to: UPGRADES.DRILL_DEPTH_1, type: 'curved' },
 
   // Convergence to prestige
-  { from: 'globalProduction2', to: 'prestigeBonus1', type: 'curved' },
-  { from: 'drillDepth1', to: 'prestigeBonus1', type: 'curved' },
+  { from: UPGRADES.GLOBAL_PRODUCTION_2, to: UPGRADES.PRESTIGE_BONUS_1, type: 'curved' },
+  { from: UPGRADES.DRILL_DEPTH_1, to: UPGRADES.PRESTIGE_BONUS_1, type: 'curved' },
 ];
 
 /**
