@@ -1,0 +1,191 @@
+/* ===================================================================
+   DESIGN SYSTEM - DNA HELIX / SCI-FI TECH THEME
+   ===================================================================
+
+   This file contains all design tokens for the idle game.
+   Colors, spacing, shadows, and effects are centralized here
+   for easy theme switching and consistent styling.
+
+   Theme: DNA Helix - Inspired by the skill tree aesthetic
+   ================================================================ */
+
+:root {
+  /* === PRIMARY HELIX COLORS === */
+  /* The core DNA double helix color palette */
+  --helix-blue: #3b82f6;
+  --helix-purple: #a855f7;
+  --helix-pink: #ec4899;
+
+  /* === TECH ACCENT COLORS === */
+  /* Functional colors for UI states */
+  --tech-cyan: #06b6d4;
+  --tech-green: #10b981;
+  --tech-amber: #fbbf24;
+  --tech-red: #ef4444;
+  --tech-indigo: #6366f1;
+
+  /* === BACKGROUND LAYERS === */
+  /* Deep space inspired background hierarchy */
+  --bg-deepest: #050816;        /* Void - darkest background */
+  --bg-deep: #0a1128;           /* Deep space - container backgrounds */
+  --bg-elevated: #0f1729;       /* Elevated surface */
+  --bg-surface: #1a2942;        /* Card surface */
+  --bg-overlay: rgba(10, 17, 40, 0.9);  /* Overlay backgrounds */
+
+  /* === BORDER COLORS === */
+  /* Tech-themed borders with varying opacity */
+  --border-subtle: rgba(59, 130, 246, 0.2);
+  --border-medium: rgba(59, 130, 246, 0.4);
+  --border-strong: rgba(59, 130, 246, 0.6);
+  --border-glow: rgba(59, 130, 246, 0.8);
+
+  /* === TEXT COLORS === */
+  /* Text hierarchy for readability */
+  --text-primary: #ffffff;
+  --text-secondary: #b0c4de;    /* Light blue-gray */
+  --text-tertiary: #94a3b8;     /* Slate */
+  --text-muted: #64748b;        /* Muted slate */
+  --text-disabled: #475569;     /* Disabled text */
+
+  /* === GLOW EFFECTS === */
+  /* DNA-themed glow shadows */
+  --glow-blue: 0 0 20px rgba(59, 130, 246, 0.4);
+  --glow-purple: 0 0 20px rgba(168, 85, 247, 0.4);
+  --glow-pink: 0 0 20px rgba(236, 72, 153, 0.4);
+  --glow-green: 0 0 20px rgba(16, 185, 129, 0.4);
+  --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.4);
+  --glow-amber: 0 0 20px rgba(251, 191, 36, 0.4);
+
+  /* Multi-color DNA glow */
+  --glow-helix: 0 0 30px rgba(59, 130, 246, 0.3),
+                0 0 40px rgba(168, 85, 247, 0.2);
+
+  /* === SHADOWS === */
+  /* Depth shadows for elevation */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.7);
+
+  /* Combined shadow with glow */
+  --shadow-glow-blue: 0 4px 20px rgba(0, 0, 0, 0.5),
+                       0 0 20px rgba(59, 130, 246, 0.3);
+  --shadow-glow-purple: 0 4px 20px rgba(0, 0, 0, 0.5),
+                         0 0 20px rgba(168, 85, 247, 0.3);
+
+  /* === GRADIENTS === */
+  /* DNA helix inspired gradients */
+
+  /* Primary DNA gradient (blue → purple → pink) */
+  --gradient-helix: linear-gradient(135deg,
+    var(--helix-blue) 0%,
+    var(--helix-purple) 50%,
+    var(--helix-pink) 100%);
+
+  /* Subtle background gradient */
+  --gradient-helix-subtle: linear-gradient(135deg,
+    rgba(59, 130, 246, 0.1) 0%,
+    rgba(168, 85, 247, 0.15) 50%,
+    rgba(236, 72, 153, 0.1) 100%);
+
+  /* Surface gradients */
+  --gradient-surface: linear-gradient(135deg,
+    var(--bg-elevated) 0%,
+    var(--bg-surface) 100%);
+
+  --gradient-surface-reverse: linear-gradient(135deg,
+    var(--bg-surface) 0%,
+    var(--bg-elevated) 100%);
+
+  /* Button gradient */
+  --gradient-button: linear-gradient(135deg,
+    var(--helix-blue) 0%,
+    var(--helix-purple) 100%);
+
+  /* Success gradient */
+  --gradient-success: linear-gradient(135deg,
+    var(--tech-green) 0%,
+    var(--tech-cyan) 100%);
+
+  /* Warning gradient */
+  --gradient-warning: linear-gradient(135deg,
+    var(--tech-amber) 0%,
+    #f97316 100%);
+
+  /* === SPACING === */
+  /* Consistent spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* === BORDER RADIUS === */
+  /* Rounded corner scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* === ANIMATIONS === */
+  /* Timing functions and durations */
+  --anim-instant: 100ms;
+  --anim-fast: 150ms;
+  --anim-normal: 300ms;
+  --anim-slow: 600ms;
+  --anim-ambient: 3s;
+
+  /* Easing curves */
+  --ease-tech: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* === Z-INDEX LAYERS === */
+  /* Consistent layering system */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 40;
+  --z-overlay: 50;
+  --z-modal: 100;
+  --z-tooltip: 200;
+
+  /* === BACKDROP BLUR === */
+  --blur-sm: blur(4px);
+  --blur-md: blur(8px);
+  --blur-lg: blur(12px);
+}
+
+/* === ALTERNATIVE THEMES === */
+/* Can be applied via data-theme attribute */
+
+/* Cyber Matrix Theme (green/cyan) */
+[data-theme="cyber-matrix"] {
+  --helix-blue: #10b981;
+  --helix-purple: #06b6d4;
+  --helix-pink: #84cc16;
+  --tech-green: #22c55e;
+  --tech-cyan: #14b8a6;
+}
+
+/* Cosmic Void Theme (deep purple/black) */
+[data-theme="cosmic-void"] {
+  --helix-blue: #8b5cf6;
+  --helix-purple: #a855f7;
+  --helix-pink: #c084fc;
+  --bg-deepest: #000000;
+  --bg-deep: #0c0014;
+  --bg-elevated: #14001f;
+  --bg-surface: #1f0033;
+}
+
+/* Neural Network Theme (orange/yellow) */
+[data-theme="neural-network"] {
+  --helix-blue: #f97316;
+  --helix-purple: #fb923c;
+  --helix-pink: #fbbf24;
+  --tech-amber: #fcd34d;
+  --tech-green: #facc15;
+}

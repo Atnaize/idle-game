@@ -1,0 +1,338 @@
+/* ===================================================================
+   BACKGROUND PATTERNS
+   ===================================================================
+
+   SVG and CSS-based patterns for backgrounds and overlays.
+   DNA helix, hexagons, grids, and tech patterns.
+   ================================================================ */
+
+/* === HEXAGONAL PATTERN === */
+/* Subtle hexagonal grid pattern */
+
+.pattern-hexagon {
+  background-image:
+    linear-gradient(30deg, transparent 48%, var(--border-subtle) 49%, var(--border-subtle) 51%, transparent 52%),
+    linear-gradient(150deg, transparent 48%, var(--border-subtle) 49%, var(--border-subtle) 51%, transparent 52%);
+  background-size: 50px 87px;
+}
+
+.pattern-hexagon-dense {
+  background-image:
+    linear-gradient(30deg, transparent 48%, var(--border-subtle) 49%, var(--border-subtle) 51%, transparent 52%),
+    linear-gradient(150deg, transparent 48%, var(--border-subtle) 49%, var(--border-subtle) 51%, transparent 52%);
+  background-size: 30px 52px;
+}
+
+/* === DNA PATTERN VARIATIONS (for comparison) === */
+
+/* Option 1: Rounded hexagons with soft gradient */
+.pattern-dna-rounded {
+  background-image:
+    linear-gradient(30deg, transparent 45%, var(--border-subtle) 48%, var(--border-subtle) 52%, transparent 55%),
+    linear-gradient(150deg, transparent 45%, var(--border-subtle) 48%, var(--border-subtle) 52%, transparent 55%);
+  background-size: 50px 87px;
+}
+
+/* Option 2: Circles in hexagonal arrangement */
+.pattern-dna-circles {
+  background-image:
+    radial-gradient(circle, var(--border-subtle) 2px, transparent 2px);
+  background-size: 25px 43px;
+  background-position: 0 0, 12.5px 21.5px;
+}
+
+/* Option 3: Softer gradient lines */
+.pattern-dna-soft {
+  background-image:
+    linear-gradient(30deg, transparent 46%, var(--border-subtle) 50%, transparent 54%),
+    linear-gradient(150deg, transparent 46%, var(--border-subtle) 50%, transparent 54%);
+  background-size: 50px 87px;
+}
+
+/* === CIRCUIT PATTERN === */
+/* Tech circuit board pattern */
+
+.pattern-circuit {
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(var(--border-subtle) 0.5px, transparent 0.5px),
+    linear-gradient(90deg, var(--border-subtle) 0.5px, transparent 0.5px);
+  background-size:
+    100px 100px,
+    100px 100px,
+    20px 20px,
+    20px 20px;
+  background-position:
+    -2px -2px,
+    -2px -2px,
+    -1px -1px,
+    -1px -1px;
+}
+
+/* === GRID PATTERN === */
+/* Simple grid pattern (like skill tree) */
+
+.pattern-grid {
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.pattern-grid-small {
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* === DOT PATTERN === */
+/* Dotted background pattern */
+
+.pattern-dots {
+  background-image: radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.pattern-dots-dense {
+  background-image: radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+/* === DNA HELIX PATTERN === */
+/* Animated DNA helix background overlay */
+
+.pattern-dna-helix {
+  position: relative;
+}
+
+.pattern-dna-helix::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg,
+      transparent 0%,
+      var(--helix-blue) 20%,
+      transparent 40%,
+      transparent 60%,
+      var(--helix-purple) 80%,
+      transparent 100%);
+  opacity: 0.05;
+  pointer-events: none;
+  animation: helixWave 6s ease-in-out infinite;
+}
+
+.pattern-dna-helix::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(-135deg,
+      transparent 0%,
+      var(--helix-purple) 20%,
+      transparent 40%,
+      transparent 60%,
+      var(--helix-pink) 80%,
+      transparent 100%);
+  opacity: 0.05;
+  pointer-events: none;
+  animation: helixWave 6s ease-in-out infinite reverse;
+}
+
+@keyframes helixWave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+}
+
+/* === RADIAL GRADIENT PATTERN === */
+/* Deep space radial gradient */
+
+.pattern-radial-space {
+  background: radial-gradient(ellipse at center,
+    var(--bg-deep) 0%,
+    var(--bg-deepest) 100%);
+}
+
+.pattern-radial-glow {
+  background: radial-gradient(circle at center,
+    var(--helix-blue) 0%,
+    transparent 70%);
+  opacity: 0.1;
+}
+
+/* === STRIPE PATTERN === */
+/* Diagonal stripes */
+
+.pattern-stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    var(--border-subtle) 10px,
+    var(--border-subtle) 11px
+  );
+}
+
+.pattern-stripes-vertical {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10px,
+    var(--border-subtle) 10px,
+    var(--border-subtle) 11px
+  );
+}
+
+/* === TECH CORNER PATTERN === */
+/* Decorative tech corners */
+
+.pattern-tech-corners {
+  position: relative;
+}
+
+/* Top-left corner */
+.pattern-tech-corners::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid var(--helix-blue);
+  border-left: 2px solid var(--helix-blue);
+  border-top-left-radius: var(--radius-sm);
+}
+
+/* Bottom-right corner */
+.pattern-tech-corners::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid var(--helix-blue);
+  border-right: 2px solid var(--helix-blue);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+/* === SCANLINE OVERLAY === */
+/* CRT monitor scanline effect */
+
+.pattern-scanlines {
+  position: relative;
+}
+
+.pattern-scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(59, 130, 246, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: var(--z-raised);
+  animation: scanline 8s linear infinite;
+}
+
+/* === NOISE PATTERN === */
+/* Subtle noise texture */
+
+.pattern-noise {
+  position: relative;
+}
+
+.pattern-noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: var(--z-base);
+  opacity: 0.5;
+}
+
+/* === VIGNETTE OVERLAY === */
+/* Dark edges fade */
+
+.pattern-vignette {
+  position: relative;
+}
+
+.pattern-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+
+/* === GLOW SPOTS === */
+/* Floating glow spots */
+
+.pattern-glow-spots {
+  position: relative;
+}
+
+.pattern-glow-spots::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle,
+    var(--helix-blue) 0%,
+    transparent 70%);
+  opacity: 0.1;
+  pointer-events: none;
+  animation: floatGentle 6s ease-in-out infinite;
+}
+
+.pattern-glow-spots::after {
+  content: '';
+  position: absolute;
+  bottom: 20%;
+  right: 10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle,
+    var(--helix-purple) 0%,
+    transparent 70%);
+  opacity: 0.1;
+  pointer-events: none;
+  animation: floatGentle 6s ease-in-out infinite reverse;
+}
+
+/* === UTILITY CLASSES === */
+
+/* Apply pattern as background overlay */
+.pattern-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.pattern-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animated patterns */
+.pattern-animated {
+  animation: gridMove 20s linear infinite;
+}

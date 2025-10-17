@@ -1,0 +1,118 @@
+/* Import design system FIRST (before Tailwind) */
+@import './styles/theme.css';
+@import './styles/components.css';
+@import './styles/animations.css';
+@import './styles/patterns.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: contain;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-900 text-white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent text selection on tap */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Disable double-tap zoom */
+    touch-action: manipulation;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Allow text selection in specific areas */
+  input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+}
+
+@layer utilities {
+  /* Legacy utility */
+  .bg-gray-750 {
+    background-color: #2d3748;
+  }
+
+  /* Text color utilities using CSS custom properties */
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-tertiary {
+    color: var(--text-tertiary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  /* Safe area support for iOS notch */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-60px) scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  .animate-float {
+    animation: float 0.8s ease-out forwards;
+  }
+
+  /* Tap feedback animation */
+  @keyframes tap-feedback {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

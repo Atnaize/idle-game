@@ -1,0 +1,76 @@
+/* Skill Tree Connection Lines - DNA Helix Style */
+
+.skill-connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.skill-connection {
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: url(#connection-glow);
+}
+
+/* Locked connections - gray and dashed */
+.skill-connection--locked {
+  stroke: rgba(75, 85, 99, 0.4);
+  stroke-width: 2;
+  opacity: 0.5;
+}
+
+/* Available connections - ready to unlock */
+.skill-connection--available {
+  stroke: rgba(59, 130, 246, 0.6);
+  stroke-width: 2.5;
+  opacity: 0.7;
+  animation: connectionPulse 2s ease-in-out infinite;
+}
+
+/* Active connections - both nodes purchased */
+.skill-connection--active {
+  stroke: url(#connection-gradient-active);
+  stroke-width: 3;
+  opacity: 1;
+  animation: connectionFlow 3s linear infinite;
+}
+
+@keyframes connectionPulse {
+  0%, 100% {
+    opacity: 0.7;
+    stroke-width: 2.5;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 3;
+  }
+}
+
+@keyframes connectionFlow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 20;
+  }
+}
+
+/* Add flowing energy effect to active connections */
+.skill-connection--active {
+  stroke-dasharray: 10 10;
+  animation: connectionFlow 1.5s linear infinite, connectionGlow 2s ease-in-out infinite;
+}
+
+@keyframes connectionGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.9));
+  }
+}
