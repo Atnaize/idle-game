@@ -10,7 +10,6 @@ import { ProducersTab } from '@components/tabs/ProducersTab';
 import { SkillTreeTab } from '@components/tabs/SkillTreeTab';
 import { AchievementsTab } from '@components/tabs/AchievementsTab';
 import { PrestigeTab } from '@components/tabs/PrestigeTab';
-import { SettingsTab } from '@components/tabs/SettingsTab';
 
 function App() {
   const { initialized, initializeGame, selectedTab, tick } = useGameStore();
@@ -62,7 +61,6 @@ function App() {
             {selectedTab === 'skilltree' && <SkillTreeTab />}
             {selectedTab === 'achievements' && <AchievementsTab />}
             {selectedTab === 'prestige' && <PrestigeTab />}
-            {selectedTab === 'settings' && <SettingsTab />}
           </div>
         </div>
 
