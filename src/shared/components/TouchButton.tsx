@@ -61,11 +61,12 @@ export function TouchButton({
     }
   }, []);
 
-  // Size classes
+  // Size classes - using static values for Tailwind JIT compilation
+  // Note: Template literals don't work with Tailwind, must use static strings
   const sizeClasses = {
-    sm: `min-h-[${LAYOUT.TOUCH.minSize}px] px-3 py-2 text-sm`,
-    md: `min-h-[${LAYOUT.TOUCH.comfortable}px] px-4 py-3 text-base`,
-    lg: `min-h-[${LAYOUT.TOUCH.comfortable}px] px-6 py-4 text-lg`,
+    sm: 'min-h-[44px] px-3 py-2 text-sm', // LAYOUT.TOUCH.minSize
+    md: 'min-h-[52px] px-4 py-3 text-base', // LAYOUT.TOUCH.comfortable
+    lg: 'min-h-[52px] px-6 py-4 text-lg', // LAYOUT.TOUCH.comfortable
   };
 
   // Variant classes
