@@ -14,6 +14,7 @@ import type { Producer, Upgrade } from './Producer';
 import type { Achievement } from './Achievement';
 import type { ClickPower } from './ClickPower';
 import type { Prestige } from './Prestige';
+import { RESOURCES } from '@config/resources.config';
 
 export interface GameEngineConfig {
   targetFPS?: number;
@@ -278,7 +279,7 @@ export class GameEngine {
     this.stats.totalClicks += 1;
 
     // Add to main resource (ore)
-    const oreResource = this.resources['ore'];
+    const oreResource = this.resources[RESOURCES.ORE];
     if (oreResource) {
       oreResource.add(result.amount);
     }

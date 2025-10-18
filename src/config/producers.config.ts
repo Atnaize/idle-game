@@ -5,6 +5,7 @@
 
 import { Miner, Drill, Complex, QuantumDevice } from '@engine/producers';
 import type { GameContext } from '@/types/core';
+import { RESOURCES } from './resources.config';
 
 // Producer ID constants
 export const PRODUCERS = {
@@ -27,9 +28,9 @@ export const createProducers = () => {
       description: 'A basic miner that extracts ore',
       icon: '⛏️',
       tier: 1,
-      baseCost: { ore: 10 },
+      baseCost: { [RESOURCES.ORE]: 10 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 0.5 },
+      baseProduction: { [RESOURCES.ORE]: 0.5 },
       efficiency: 1.0,
       unlocked: true,
       visible: true,
@@ -40,15 +41,15 @@ export const createProducers = () => {
       description: 'Automated mining equipment',
       icon: '🚜',
       tier: 2,
-      baseCost: { ore: 100 },
+      baseCost: { [RESOURCES.ORE]: 100 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 4 },
+      baseProduction: { [RESOURCES.ORE]: 4 },
       efficiency: 1.2,
       unlocked: false,
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const miner = ctx.producers[PRODUCERS.MINER];
-        return miner && miner.level >= 5;
+        return miner !== undefined && miner.level >= 5;
       },
     }),
 
@@ -58,16 +59,16 @@ export const createProducers = () => {
       description: 'Deep mining drill with depth bonuses',
       icon: '🔧',
       tier: 3,
-      baseCost: { ore: 1100 },
+      baseCost: { [RESOURCES.ORE]: 1100 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 20 },
+      baseProduction: { [RESOURCES.ORE]: 20 },
       depth: 0,
       depthBonus: 0.1,
       unlocked: false,
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const excavator = ctx.producers[PRODUCERS.EXCAVATOR];
-        return excavator && excavator.level >= 10;
+        return excavator !== undefined && excavator.level >= 10;
       },
     }),
 
@@ -76,16 +77,16 @@ export const createProducers = () => {
       description: 'Advanced drilling technology',
       icon: '🔦',
       tier: 4,
-      baseCost: { ore: 12000 },
+      baseCost: { [RESOURCES.ORE]: 12000 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 47 },
+      baseProduction: { [RESOURCES.ORE]: 47 },
       depth: 1,
       depthBonus: 0.15,
       unlocked: false,
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const drill = ctx.producers[PRODUCERS.DRILL];
-        return drill && drill.level >= 10;
+        return drill !== undefined && drill.level >= 10;
       },
     }),
 
@@ -95,16 +96,16 @@ export const createProducers = () => {
       description: 'Large facility with synergy bonuses',
       icon: '🏭',
       tier: 5,
-      baseCost: { ore: 130000 },
+      baseCost: { [RESOURCES.ORE]: 130000 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 260 },
+      baseProduction: { [RESOURCES.ORE]: 260 },
       synergyBonus: 0.01,
       automation: true,
       unlocked: false,
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const laserDrill = ctx.producers[PRODUCERS.LASER_DRILL];
-        return laserDrill && laserDrill.level >= 10;
+        return laserDrill !== undefined && laserDrill.level >= 10;
       },
     }),
 
@@ -114,9 +115,9 @@ export const createProducers = () => {
       description: 'Reality-bending extraction device',
       icon: '⚛️',
       tier: 6,
-      baseCost: { ore: 1400000 },
+      baseCost: { [RESOURCES.ORE]: 1400000 },
       costMultiplier: 1.15,
-      baseProduction: { ore: 1400 },
+      baseProduction: { [RESOURCES.ORE]: 1400 },
       quantumLevel: 1,
       quantumScaling: 1.5,
       instability: 0,
@@ -124,7 +125,7 @@ export const createProducers = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const complex = ctx.producers[PRODUCERS.MINING_COMPLEX];
-        return complex && complex.level >= 10;
+        return complex !== undefined && complex.level >= 10;
       },
     }),
   };

@@ -8,31 +8,137 @@ import type {
 } from '@/types/core';
 
 /**
+ * Strategy interface for checking achievement conditions
+ */
+export interface AchievementConditionStrategy {
+  check(context: GameContext): boolean;
+  calculateProgress(context: GameContext): number;
+}
+
+/**
+ * Strategy interface for tracking achievement progress
+ */
+export interface AchievementProgressStrategy {
+  update(context: GameContext): void;
+  getProgress(): number;
+  serialize(): Record<string, unknown>;
+  deserialize(data: Record<string, unknown>): void;
+}
+
+/**
+ * Milestone strategy - Check if resource amount reaches target
+ */
+export class MilestoneConditionStrategy implements AchievementConditionStrategy {
+  constructor(
+    private readonly resourceId: string,
+    private readonly targetAmount: BigNumber
+  ) {}
+
+  check(context: GameContext): boolean {
+    const resource = context.resources[this.resourceId];
+    return resource !== undefined && resource.amount.gte(this.targetAmount);
+  }
+
+  calculateProgress(context: GameContext): number {
+    const resource = context.resources[this.resourceId];
+    if (!resource) {
+      return 0;
+    }
+
+    const current = resource.amount;
+    const progress = current.div(this.targetAmount).toNumber();
+    return Math.min(progress, 1);
+  }
+}
+
+/**
+ * Production strategy - Track total production across all time
+ */
+export class ProductionConditionStrategy implements AchievementConditionStrategy {
+  private totalProduced: BigNumber;
+
+  constructor(
+    private readonly resourceId: string,
+    private readonly targetAmount: BigNumber
+  ) {
+    this.totalProduced = BigNumber.zero();
+  }
+
+  addProduction(amount: BigNumber): void {
+    this.totalProduced = this.totalProduced.add(amount);
+  }
+
+  check(context: GameContext): boolean {
+    void context;
+    return this.totalProduced.gte(this.targetAmount);
+  }
+
+  calculateProgress(context: GameContext): number {
+    void context;
+    const progress = this.totalProduced.div(this.targetAmount).toNumber();
+    return Math.min(progress, 1);
+  }
+
+  getTotalProduced(): BigNumber {
+    return this.totalProduced;
+  }
+}
+
+/**
+ * Purchase strategy - Check if entity reaches target level
+ */
+export class PurchaseConditionStrategy implements AchievementConditionStrategy {
+  constructor(
+    private readonly targetId: string,
+    private readonly targetLevel: number
+  ) {}
+
+  check(context: GameContext): boolean {
+    const target = context.producers[this.targetId] || context.upgrades[this.targetId];
+    return target !== undefined && target.level >= this.targetLevel;
+  }
+
+  calculateProgress(context: GameContext): number {
+    const target = context.producers[this.targetId] || context.upgrades[this.targetId];
+    if (!target) {
+      return 0;
+    }
+
+    const progress = target.level / this.targetLevel;
+    return Math.min(progress, 1);
+  }
+}
+
+/**
  * Achievement - Permanent goals with rewards
+ * Uses strategy pattern for condition checking and progress tracking
  */
 export class Achievement extends Entity {
   completed: boolean;
   progress: number;
   maxProgress: number;
   reward: AchievementReward | null;
+  private conditionStrategy: AchievementConditionStrategy;
 
-  constructor(id: string, config: AchievementConfig) {
+  constructor(
+    id: string,
+    config: AchievementConfig,
+    conditionStrategy: AchievementConditionStrategy
+  ) {
     super(id, config, 'achievement');
 
     this.completed = false;
     this.progress = 0;
     this.maxProgress = 1;
     this.reward = config.reward || null;
+    this.conditionStrategy = conditionStrategy;
   }
 
   /**
    * Check if achievement condition is met
    */
   checkCondition(context: GameContext): boolean {
-    // Override in subclass
-    // Base implementation doesn't use context, but subclasses do
-    void context; // Explicitly mark as intentionally unused
-    return false;
+    return this.conditionStrategy.check(context);
   }
 
   /**
@@ -42,6 +148,8 @@ export class Achievement extends Entity {
     if (this.completed) {
       return;
     }
+
+    this.progress = this.conditionStrategy.calculateProgress(context);
 
     if (this.checkCondition(context)) {
       this.complete(context);
@@ -116,6 +224,10 @@ export class Achievement extends Entity {
     }
   }
 
+  getConditionStrategy(): AchievementConditionStrategy {
+    return this.conditionStrategy;
+  }
+
   serialize(): SerializedData {
     return {
       ...super.serialize(),
@@ -124,8 +236,12 @@ export class Achievement extends Entity {
     };
   }
 
-  static deserialize(data: SerializedData, config: AchievementConfig): Achievement {
-    const achievement = new Achievement(data.id, config);
+  static deserialize(
+    data: SerializedData,
+    config: AchievementConfig,
+    conditionStrategy: AchievementConditionStrategy
+  ): Achievement {
+    const achievement = new Achievement(data.id, config, conditionStrategy);
     achievement.completed = data.completed ?? false;
     achievement.progress = data.progress ?? 0;
     achievement.unlocked = data.unlocked;
@@ -134,129 +250,21 @@ export class Achievement extends Entity {
   }
 
   clone(): Achievement {
-    const clone = new Achievement(this.id, {
-      name: this.name,
-      description: this.description,
-      icon: this.icon,
-      reward: this.reward ?? undefined,
-      unlocked: this.unlocked,
-      visible: this.visible,
-    });
+    const clone = new Achievement(
+      this.id,
+      {
+        name: this.name,
+        description: this.description,
+        icon: this.icon,
+        reward: this.reward ?? undefined,
+        unlocked: this.unlocked,
+        visible: this.visible,
+      },
+      this.conditionStrategy
+    );
     clone.completed = this.completed;
     clone.progress = this.progress;
     clone.maxProgress = this.maxProgress;
     return clone;
-  }
-}
-
-/**
- * MilestoneAchievement - Reach a specific resource amount
- */
-export class MilestoneAchievement extends Achievement {
-  resourceId: string;
-  targetAmount: BigNumber;
-
-  constructor(
-    id: string,
-    config: AchievementConfig & { resourceId: string; targetAmount: BigNumber | number | string }
-  ) {
-    super(id, config);
-    this.resourceId = config.resourceId;
-    this.targetAmount = BigNumber.from(config.targetAmount);
-  }
-
-  checkCondition(context: GameContext): boolean {
-    const resource = context.resources[this.resourceId];
-    return resource && resource.amount.gte(this.targetAmount);
-  }
-
-  updateProgress(context: GameContext): void {
-    if (this.completed) {
-      return;
-    }
-
-    const resource = context.resources[this.resourceId];
-    if (resource) {
-      const current = resource.amount;
-      this.progress = current.div(this.targetAmount).toNumber();
-      this.progress = Math.min(this.progress, 1);
-    }
-
-    super.updateProgress(context);
-  }
-}
-
-/**
- * ProductionAchievement - Produce total amount across all time
- */
-export class ProductionAchievement extends Achievement {
-  resourceId: string;
-  targetAmount: BigNumber;
-  totalProduced: BigNumber;
-
-  constructor(
-    id: string,
-    config: AchievementConfig & { resourceId: string; targetAmount: BigNumber | number | string }
-  ) {
-    super(id, config);
-    this.resourceId = config.resourceId;
-    this.targetAmount = BigNumber.from(config.targetAmount);
-    this.totalProduced = BigNumber.zero();
-  }
-
-  addProduction(amount: BigNumber): void {
-    this.totalProduced = this.totalProduced.add(amount);
-  }
-
-  checkCondition(context: GameContext): boolean {
-    void context; // Not needed for production achievements
-    return this.totalProduced.gte(this.targetAmount);
-  }
-
-  updateProgress(context: GameContext): void {
-    if (this.completed) {
-      return;
-    }
-
-    this.progress = this.totalProduced.div(this.targetAmount).toNumber();
-    this.progress = Math.min(this.progress, 1);
-
-    super.updateProgress(context);
-  }
-}
-
-/**
- * PurchaseAchievement - Purchase a specific amount of something
- */
-export class PurchaseAchievement extends Achievement {
-  targetId: string;
-  targetLevel: number;
-
-  constructor(
-    id: string,
-    config: AchievementConfig & { targetId: string; targetLevel: number }
-  ) {
-    super(id, config);
-    this.targetId = config.targetId;
-    this.targetLevel = config.targetLevel;
-  }
-
-  checkCondition(context: GameContext): boolean {
-    const target = context.producers[this.targetId] || context.upgrades[this.targetId];
-    return target && target.level >= this.targetLevel;
-  }
-
-  updateProgress(context: GameContext): void {
-    if (this.completed) {
-      return;
-    }
-
-    const target = context.producers[this.targetId] || context.upgrades[this.targetId];
-    if (target) {
-      this.progress = target.level / this.targetLevel;
-      this.progress = Math.min(this.progress, 1);
-    }
-
-    super.updateProgress(context);
   }
 }

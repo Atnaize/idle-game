@@ -3,7 +3,12 @@
  * Defines all game achievements and their IDs
  */
 
-import { MilestoneAchievement, PurchaseAchievement } from '@engine/Achievement';
+import {
+  Achievement,
+  MilestoneConditionStrategy,
+  PurchaseConditionStrategy,
+} from '@engine/Achievement';
+import { BigNumber } from '@engine/BigNumber';
 import { RESOURCES } from './resources.config';
 import { PRODUCERS } from './producers.config';
 
@@ -25,70 +30,80 @@ export type AchievementId = typeof ACHIEVEMENTS[keyof typeof ACHIEVEMENTS];
 export const createAchievements = () => {
   return {
     // Milestone achievements
-    [ACHIEVEMENTS.FIRST_ORE]: new MilestoneAchievement(ACHIEVEMENTS.FIRST_ORE, {
-      name: 'First Strike',
-      description: 'Reach 100 ore',
-      icon: '🎯',
-      resourceId: RESOURCES.ORE,
-      targetAmount: 100,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.1,
+    [ACHIEVEMENTS.FIRST_ORE]: new Achievement(
+      ACHIEVEMENTS.FIRST_ORE,
+      {
+        name: 'First Strike',
+        description: 'Reach 100 ore',
+        icon: '🎯',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.1,
+        },
       },
-    }),
+      new MilestoneConditionStrategy(RESOURCES.ORE, BigNumber.from(100))
+    ),
 
-    [ACHIEVEMENTS.THOUSAND_ORE]: new MilestoneAchievement(ACHIEVEMENTS.THOUSAND_ORE, {
-      name: 'Getting Started',
-      description: 'Reach 1,000 ore',
-      icon: '📊',
-      resourceId: RESOURCES.ORE,
-      targetAmount: 1000,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.1,
+    [ACHIEVEMENTS.THOUSAND_ORE]: new Achievement(
+      ACHIEVEMENTS.THOUSAND_ORE,
+      {
+        name: 'Getting Started',
+        description: 'Reach 1,000 ore',
+        icon: '📊',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.1,
+        },
       },
-    }),
+      new MilestoneConditionStrategy(RESOURCES.ORE, BigNumber.from(1000))
+    ),
 
-    [ACHIEVEMENTS.MILLION_ORE]: new MilestoneAchievement(ACHIEVEMENTS.MILLION_ORE, {
-      name: 'Millionaire',
-      description: 'Reach 1 million ore',
-      icon: '💰',
-      resourceId: RESOURCES.ORE,
-      targetAmount: 1000000,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.25,
+    [ACHIEVEMENTS.MILLION_ORE]: new Achievement(
+      ACHIEVEMENTS.MILLION_ORE,
+      {
+        name: 'Millionaire',
+        description: 'Reach 1 million ore',
+        icon: '💰',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.25,
+        },
       },
-    }),
+      new MilestoneConditionStrategy(RESOURCES.ORE, BigNumber.from(1000000))
+    ),
 
     // Purchase achievements
-    [ACHIEVEMENTS.TEN_MINERS]: new PurchaseAchievement(ACHIEVEMENTS.TEN_MINERS, {
-      name: 'Small Crew',
-      description: 'Own 10 miners',
-      icon: '👷',
-      targetId: PRODUCERS.MINER,
-      targetLevel: 10,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.05,
+    [ACHIEVEMENTS.TEN_MINERS]: new Achievement(
+      ACHIEVEMENTS.TEN_MINERS,
+      {
+        name: 'Small Crew',
+        description: 'Own 10 miners',
+        icon: '👷',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.05,
+        },
       },
-    }),
+      new PurchaseConditionStrategy(PRODUCERS.MINER, 10)
+    ),
 
-    [ACHIEVEMENTS.HUNDRED_MINERS]: new PurchaseAchievement(ACHIEVEMENTS.HUNDRED_MINERS, {
-      name: 'Mining Army',
-      description: 'Own 100 miners',
-      icon: '👷‍♂️',
-      targetId: PRODUCERS.MINER,
-      targetLevel: 100,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.15,
+    [ACHIEVEMENTS.HUNDRED_MINERS]: new Achievement(
+      ACHIEVEMENTS.HUNDRED_MINERS,
+      {
+        name: 'Mining Army',
+        description: 'Own 100 miners',
+        icon: '👷‍♂️',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.15,
+        },
       },
-    }),
+      new PurchaseConditionStrategy(PRODUCERS.MINER, 100)
+    ),
   };
 };

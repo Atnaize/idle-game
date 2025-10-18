@@ -7,6 +7,7 @@ import { ClickPower } from '@engine/ClickPower';
 import { Upgrade } from '@engine/Producer';
 import type { GameContext } from '@/types/core';
 import { BigNumber } from '@engine/BigNumber';
+import { RESOURCES } from './resources.config';
 
 // Click Power ID constants
 export const CLICK_POWER = {
@@ -30,7 +31,7 @@ export const createClickPower = () => {
     name: 'Manual Mining Power',
     description: 'Click to mine ore manually',
     icon: '👆',
-    baseCost: { ore: 25 },
+    baseCost: { [RESOURCES.ORE]: 25 },
     costMultiplier: 1.5,
     maxLevel: 100,
     baseClickValue: 1,
@@ -48,7 +49,7 @@ export const createClickUpgrades = () => {
       name: 'Stronger Clicks',
       description: 'Double click power',
       icon: '💪',
-      baseCost: { ore: 25 },
+      baseCost: { [RESOURCES.ORE]: 25 },
       costMultiplier: 2.5,
       maxLevel: 10,
       effectType: 'multiplier',
@@ -66,7 +67,7 @@ export const createClickUpgrades = () => {
       name: 'Lucky Strikes',
       description: '+5% crit chance per level',
       icon: '🍀',
-      baseCost: { ore: 300 },
+      baseCost: { [RESOURCES.ORE]: 300 },
       costMultiplier: 3,
       maxLevel: 10,
       effectType: 'additive',
@@ -75,7 +76,7 @@ export const createClickUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const clickPower1 = ctx.upgrades[CLICK_UPGRADES.CLICK_POWER_1];
-        return clickPower1 && clickPower1.level >= 3;
+        return clickPower1 !== undefined && clickPower1.level >= 3;
       },
       target: (gameState: GameContext, effect: BigNumber) => {
         if (gameState.clickPower) {
@@ -88,7 +89,7 @@ export const createClickUpgrades = () => {
       name: 'Devastating Blows',
       description: '+1x crit multiplier per level',
       icon: '💥',
-      baseCost: { ore: 1500 },
+      baseCost: { [RESOURCES.ORE]: 1500 },
       costMultiplier: 4,
       maxLevel: 5,
       effectType: 'additive',
@@ -97,7 +98,7 @@ export const createClickUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const critChance = ctx.upgrades[CLICK_UPGRADES.CRIT_CHANCE_1];
-        return critChance && critChance.level >= 3;
+        return critChance !== undefined && critChance.level >= 3;
       },
       target: (gameState: GameContext, effect: BigNumber) => {
         if (gameState.clickPower) {

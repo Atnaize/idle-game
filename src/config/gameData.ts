@@ -2,7 +2,11 @@ import { BigNumber } from '@engine/BigNumber';
 import { Ore } from '@engine/resources';
 import { Miner, Drill, Complex, QuantumDevice } from '@engine/producers';
 import { Upgrade } from '@engine/Producer';
-import { MilestoneAchievement, PurchaseAchievement } from '@engine/Achievement';
+import {
+  Achievement,
+  MilestoneConditionStrategy,
+  PurchaseConditionStrategy,
+} from '@engine/Achievement';
 import { ClickPower } from '@engine/ClickPower';
 import { Prestige } from '@engine/Prestige';
 import { Formulas } from '@utils/Formulas';
@@ -300,71 +304,81 @@ export const createUpgrades = () => {
 export const createAchievements = () => {
   return {
     // Milestone achievements
-    firstOre: new MilestoneAchievement('firstOre', {
-      name: 'First Strike',
-      description: 'Reach 100 ore',
-      icon: '🎯',
-      resourceId: 'ore',
-      targetAmount: 100,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.1,
+    firstOre: new Achievement(
+      'firstOre',
+      {
+        name: 'First Strike',
+        description: 'Reach 100 ore',
+        icon: '🎯',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.1,
+        },
       },
-    }),
+      new MilestoneConditionStrategy('ore', BigNumber.from(100))
+    ),
 
-    thousandOre: new MilestoneAchievement('thousandOre', {
-      name: 'Getting Started',
-      description: 'Reach 1,000 ore',
-      icon: '📊',
-      resourceId: 'ore',
-      targetAmount: 1000,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.1,
+    thousandOre: new Achievement(
+      'thousandOre',
+      {
+        name: 'Getting Started',
+        description: 'Reach 1,000 ore',
+        icon: '📊',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.1,
+        },
       },
-    }),
+      new MilestoneConditionStrategy('ore', BigNumber.from(1000))
+    ),
 
-    millionOre: new MilestoneAchievement('millionOre', {
-      name: 'Millionaire',
-      description: 'Reach 1 million ore',
-      icon: '💰',
-      resourceId: 'ore',
-      targetAmount: 1000000,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.25,
+    millionOre: new Achievement(
+      'millionOre',
+      {
+        name: 'Millionaire',
+        description: 'Reach 1 million ore',
+        icon: '💰',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.25,
+        },
       },
-    }),
+      new MilestoneConditionStrategy('ore', BigNumber.from(1000000))
+    ),
 
     // Purchase achievements
-    tenMiners: new PurchaseAchievement('tenMiners', {
-      name: 'Small Crew',
-      description: 'Own 10 miners',
-      icon: '👷',
-      targetId: 'miner',
-      targetLevel: 10,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.05,
+    tenMiners: new Achievement(
+      'tenMiners',
+      {
+        name: 'Small Crew',
+        description: 'Own 10 miners',
+        icon: '👷',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.05,
+        },
       },
-    }),
+      new PurchaseConditionStrategy('miner', 10)
+    ),
 
-    hundredMiners: new PurchaseAchievement('hundredMiners', {
-      name: 'Mining Army',
-      description: 'Own 100 miners',
-      icon: '👷‍♂️',
-      targetId: 'miner',
-      targetLevel: 100,
-      reward: {
-        type: 'multiplier',
-        target: 'all',
-        value: 1.15,
+    hundredMiners: new Achievement(
+      'hundredMiners',
+      {
+        name: 'Mining Army',
+        description: 'Own 100 miners',
+        icon: '👷‍♂️',
+        reward: {
+          type: 'multiplier',
+          target: 'all',
+          value: 1.15,
+        },
       },
-    }),
+      new PurchaseConditionStrategy('miner', 100)
+    ),
   };
 };
 

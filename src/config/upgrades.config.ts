@@ -6,6 +6,7 @@
 import { Upgrade } from '@engine/Producer';
 import type { GameContext } from '@/types/core';
 import { PRODUCERS } from './producers.config';
+import { RESOURCES } from './resources.config';
 
 // Upgrade ID constants
 export const UPGRADES = {
@@ -36,7 +37,7 @@ export const createUpgrades = () => {
       name: 'Better Pickaxes',
       description: 'Doubles miner production',
       icon: '⚒️',
-      baseCost: { ore: 50 },
+      baseCost: { [RESOURCES.ORE]: 50 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -50,7 +51,7 @@ export const createUpgrades = () => {
       name: 'Mining Helmets',
       description: 'Doubles miner production again',
       icon: '🪖',
-      baseCost: { ore: 250 },
+      baseCost: { [RESOURCES.ORE]: 250 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -60,7 +61,7 @@ export const createUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const upgrade = ctx.upgrades[UPGRADES.MINER_BOOST_1];
-        return upgrade && upgrade.purchased;
+        return upgrade !== undefined && upgrade.purchased;
       },
     }),
 
@@ -69,7 +70,7 @@ export const createUpgrades = () => {
       name: 'Efficiency Training',
       description: 'All producers 2x more efficient',
       icon: '📚',
-      baseCost: { ore: 5000 },
+      baseCost: { [RESOURCES.ORE]: 5000 },
       costMultiplier: 3,
       maxLevel: 10,
       effectType: 'multiplier',
@@ -79,7 +80,7 @@ export const createUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const excavator = ctx.producers[PRODUCERS.EXCAVATOR];
-        return excavator && excavator.level >= 10;
+        return excavator !== undefined && excavator.level >= 10;
       },
     }),
 
@@ -87,7 +88,7 @@ export const createUpgrades = () => {
       name: 'Advanced Automation',
       description: 'All producers 2x more efficient',
       icon: '🤖',
-      baseCost: { ore: 50000 },
+      baseCost: { [RESOURCES.ORE]: 50000 },
       costMultiplier: 5,
       maxLevel: 5,
       effectType: 'multiplier',
@@ -97,7 +98,7 @@ export const createUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const drill = ctx.producers[PRODUCERS.DRILL];
-        return drill && drill.level >= 10;
+        return drill !== undefined && drill.level >= 10;
       },
     }),
 
@@ -106,7 +107,7 @@ export const createUpgrades = () => {
       name: 'Drill Bits',
       description: 'Doubles drill production',
       icon: '🔩',
-      baseCost: { ore: 5000 },
+      baseCost: { [RESOURCES.ORE]: 5000 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -116,7 +117,7 @@ export const createUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const drill = ctx.producers[PRODUCERS.DRILL];
-        return drill && drill.level >= 1;
+        return drill !== undefined && drill.level >= 1;
       },
     }),
 
@@ -124,7 +125,7 @@ export const createUpgrades = () => {
       name: 'Hydraulic Systems',
       description: 'Doubles all drill production',
       icon: '💧',
-      baseCost: { ore: 25000 },
+      baseCost: { [RESOURCES.ORE]: 25000 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -134,7 +135,7 @@ export const createUpgrades = () => {
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const upgrade = ctx.upgrades[UPGRADES.DRILL_EFFICIENCY_1];
-        return upgrade && upgrade.purchased;
+        return upgrade !== undefined && upgrade.purchased;
       },
     }),
 
@@ -142,7 +143,7 @@ export const createUpgrades = () => {
       name: 'Deep Mining',
       description: 'Unlocks deeper ore veins',
       icon: '⬇️',
-      baseCost: { ore: 100000 },
+      baseCost: { [RESOURCES.ORE]: 100000 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -153,7 +154,7 @@ export const createUpgrades = () => {
       unlockCondition: (ctx: GameContext) => {
         const upgrade = ctx.upgrades[UPGRADES.DRILL_SPEED_1];
         const drill = ctx.producers[PRODUCERS.DRILL];
-        return upgrade && upgrade.purchased && drill && drill.level >= 15;
+        return upgrade !== undefined && upgrade.purchased && drill !== undefined && drill.level >= 15;
       },
     }),
 
@@ -162,7 +163,7 @@ export const createUpgrades = () => {
       name: 'Quantum Efficiency',
       description: 'Prestige bonus +50% more effective',
       icon: '⚛️',
-      baseCost: { ore: 500000 },
+      baseCost: { [RESOURCES.ORE]: 500000 },
       costMultiplier: 1,
       maxLevel: 1,
       effectType: 'multiplier',
@@ -173,7 +174,7 @@ export const createUpgrades = () => {
       unlockCondition: (ctx: GameContext) => {
         const global2 = ctx.upgrades[UPGRADES.GLOBAL_PRODUCTION_2];
         const depth = ctx.upgrades[UPGRADES.DRILL_DEPTH_1];
-        return global2 && global2.purchased && depth && depth.purchased;
+        return global2 !== undefined && global2.purchased && depth !== undefined && depth.purchased;
       },
     }),
   };
