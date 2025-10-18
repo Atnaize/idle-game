@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GameEngine, BigNumber } from '@core/engine';
 import { Logger } from '@core/utils';
+import { GAME_CONFIG } from '@core/constants/gameConfig';
 import { createResources } from '@features/resources';
 import { createProducers } from '@features/producers';
 import { createUpgrades } from '@features/upgrades';
@@ -262,8 +263,8 @@ export const useGameStore = create<GameState>()(
 
           const offlineInfo = engine.deserialize(saveData);
 
-          // Show offline progress modal if away for more than 5 seconds
-          if (offlineInfo.timeAway > 5) {
+          // Show offline progress modal if away for more than configured threshold
+          if (offlineInfo.timeAway > GAME_CONFIG.SAVE.MIN_OFFLINE_TIME_FOR_MODAL) {
             set({ offlineProgress: offlineInfo });
           }
 

@@ -597,7 +597,8 @@ export class GameEngine {
     const timeAway = (now - saveData.timestamp) / 1000; // Convert to seconds
     const maxOfflineTime = this.offlineProgressLimit / 1000; // Convert to seconds
 
-    if (timeAway > 5) { // Only if more than 5 seconds away
+    // Only calculate offline progress if away for more than configured threshold
+    if (timeAway > GAME_CONFIG.SAVE.MIN_OFFLINE_TIME_FOR_MODAL) {
       this.calculateOfflineProgress(timeAway);
       Logger.debug(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
     }

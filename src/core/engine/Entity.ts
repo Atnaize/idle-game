@@ -1,4 +1,5 @@
 import { BigNumber } from './BigNumber';
+import { GAME_CONFIG } from '@core/constants/gameConfig';
 import type {
   EntityConfig,
   ResourceConfig,
@@ -258,10 +259,12 @@ export abstract class Purchasable extends Entity {
 
   /**
    * Calculate how many levels can be afforded
+   *
+   * Performs iterative calculation up to MAX_AFFORDABLE_CALC_LIMIT for performance
    */
   getMaxAffordable(resources: Record<string, Resource>): number {
     let affordable = 0;
-    const maxCheck = Math.min(1000, this.maxLevel - this.level);
+    const maxCheck = Math.min(GAME_CONFIG.PERFORMANCE.MAX_AFFORDABLE_CALC_LIMIT, this.maxLevel - this.level);
 
     for (let i = 1; i <= maxCheck; i++) {
       const cost = this.getNextCost(i);

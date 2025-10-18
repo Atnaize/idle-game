@@ -46,6 +46,9 @@ export const GAME_CONFIG = {
 
     /** LocalStorage key for last save timestamp */
     LAST_SAVE_TIME_KEY: 'idle-game-last-save',
+
+    /** Minimum time away (in seconds) before showing offline progress modal */
+    MIN_OFFLINE_TIME_FOR_MODAL: 5,
   },
 
   /**
