@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from '@core/store';
 import { useTheme, useMobileLayout } from '@shared/hooks';
+import { useGameLoop, useAutoSave } from '@core/hooks';
 import { Header, BottomNavigation } from '@shared/components';
 import { ResourceDisplay } from '@features/resources';
 import { ClickArea } from '@features/click';
@@ -12,7 +13,7 @@ import { ToastContainer } from '@features/notifications';
 import { TABS } from '@shared/config';
 
 function App() {
-  const { initialized, initializeGame, selectedTab, tick } = useGameStore();
+  const { initialized, initializeGame, selectedTab, tick, forceTick, saveGame } = useGameStore();
   const layout = useMobileLayout();
 
   // Initialize theme system
@@ -24,6 +25,12 @@ function App() {
       initializeGame();
     }
   }, [initialized, initializeGame]);
+
+  // Setup game loop for UI updates (replaces setInterval in gameStore)
+  useGameLoop(forceTick, initialized);
+
+  // Setup auto-save (replaces module-level setInterval in gameStore)
+  useAutoSave(saveGame, initialized);
 
   // Force re-render when tick changes
   useEffect(() => {

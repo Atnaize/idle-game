@@ -125,10 +125,8 @@ export const useGameStore = create<GameState>()(
 
         set({ engine, initialized: true });
 
-        // Setup tick interval for React updates
-        setInterval(() => {
-          get().forceTick();
-        }, 100); // Update UI 10 times per second
+        // UI update loop is now managed by useGameLoop hook in App.tsx
+        // Auto-save is now managed by useAutoSave hook in App.tsx
 
         // Game initialization complete
       },
@@ -255,10 +253,4 @@ export const useGameStore = create<GameState>()(
   )
 );
 
-// Auto-save every 30 seconds
-setInterval(() => {
-  const state = useGameStore.getState();
-  if (state.engine) {
-    state.saveGame();
-  }
-}, 30000);
+// Auto-save is now managed by useAutoSave hook in App.tsx

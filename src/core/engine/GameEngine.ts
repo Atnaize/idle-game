@@ -15,6 +15,7 @@ import type { Achievement } from './Achievement';
 import type { ClickPower } from './ClickPower';
 import type { Prestige } from './Prestige';
 import { RESOURCES } from '@features/resources/config/resources.config';
+import { GAME_CONFIG, DERIVED_CONFIG } from '../constants/gameConfig';
 
 export interface GameEngineConfig {
   targetFPS?: number;
@@ -62,10 +63,10 @@ export class GameEngine {
 
     this.running = false;
     this.lastTickTime = Date.now();
-    this.targetFPS = config.targetFPS || 20;
-    this.autoSaveInterval = config.autoSaveInterval || 30000; // 30 seconds
+    this.targetFPS = config.targetFPS || GAME_CONFIG.ENGINE.TARGET_FPS;
+    this.autoSaveInterval = config.autoSaveInterval || GAME_CONFIG.ENGINE.AUTO_SAVE_INTERVAL_MS;
     this.lastAutoSave = Date.now();
-    this.offlineProgressLimit = config.offlineProgressLimit || 3600000; // 1 hour
+    this.offlineProgressLimit = config.offlineProgressLimit || GAME_CONFIG.ENGINE.OFFLINE_PROGRESS_LIMIT_MS;
 
     this._cachedContext = null;
     this._contextDirty = true;
