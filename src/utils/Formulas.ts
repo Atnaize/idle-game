@@ -40,42 +40,6 @@ export class Formulas {
   }
 
   /**
-   * Logarithmic prestige formula: log10(amount / requirement)
-   */
-  static logarithmicPrestige(amount: BigNumber, requirement: BigNumber): BigNumber {
-    if (amount.lt(requirement)) {
-      return BigNumber.zero();
-    }
-
-    const ratio = amount.div(requirement);
-    return BigNumber.from(Math.floor(Math.log10(ratio.toNumber()) + 1));
-  }
-
-  /**
-   * Square root prestige formula: sqrt(amount / requirement)
-   */
-  static sqrtPrestige(amount: BigNumber, requirement: BigNumber): BigNumber {
-    if (amount.lt(requirement)) {
-      return BigNumber.zero();
-    }
-
-    const ratio = amount.div(requirement);
-    return BigNumber.from(Math.floor(Math.sqrt(ratio.toNumber())));
-  }
-
-  /**
-   * Cubic root prestige formula: cbrt(amount / requirement)
-   */
-  static cubicPrestige(amount: BigNumber, requirement: BigNumber): BigNumber {
-    if (amount.lt(requirement)) {
-      return BigNumber.zero();
-    }
-
-    const ratio = amount.div(requirement);
-    return BigNumber.from(Math.floor(Math.cbrt(ratio.toNumber())));
-  }
-
-  /**
    * Soft cap formula: reduces growth after threshold
    */
   static softCap(value: BigNumber, threshold: BigNumber, power: number = 0.5): BigNumber {
