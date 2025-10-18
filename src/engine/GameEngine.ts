@@ -268,6 +268,12 @@ export class GameEngine {
   }
 
   /**
+   * Callback for achievement completion
+   * This is set by the game store to trigger notifications
+   */
+  onAchievementComplete?: (achievement: Achievement) => void;
+
+  /**
    * Update achievement progress
    */
   private updateAchievements(): void {
@@ -275,7 +281,7 @@ export class GameEngine {
 
     Object.values(this.achievements).forEach((achievement) => {
       if (!achievement.completed) {
-        achievement.updateProgress(context);
+        achievement.updateProgress(context, this.onAchievementComplete);
       }
     });
   }

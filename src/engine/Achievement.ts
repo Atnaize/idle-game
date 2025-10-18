@@ -144,7 +144,7 @@ export class Achievement extends Entity {
   /**
    * Update achievement progress
    */
-  updateProgress(context: GameContext): void {
+  updateProgress(context: GameContext, onComplete?: (achievement: Achievement) => void): void {
     if (this.completed) {
       return;
     }
@@ -152,14 +152,14 @@ export class Achievement extends Entity {
     this.progress = this.conditionStrategy.calculateProgress(context);
 
     if (this.checkCondition(context)) {
-      this.complete(context);
+      this.complete(context, onComplete);
     }
   }
 
   /**
    * Complete the achievement
    */
-  complete(context: GameContext): void {
+  complete(context: GameContext, onComplete?: (achievement: Achievement) => void): void {
     if (this.completed) {
       return;
     }
@@ -167,6 +167,11 @@ export class Achievement extends Entity {
     this.completed = true;
     this.progress = this.maxProgress;
     this.applyReward(context);
+
+    // Trigger completion callback (for notifications, etc.)
+    if (onComplete) {
+      onComplete(this);
+    }
   }
 
   /**

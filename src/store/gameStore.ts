@@ -109,6 +109,22 @@ export const useGameStore = create<GameState>()(
         const prestige = createPrestige();
         engine.setPrestige(prestige);
 
+        // Setup achievement completion callback for notifications
+        engine.onAchievementComplete = (achievement) => {
+          // This will be imported from toast store
+          // For now, we'll add it after creating the toast integration
+          if (typeof window !== 'undefined') {
+            // Trigger toast notification
+            import('./toastStore').then(({ useToastStore }) => {
+              useToastStore.getState().showAchievement(
+                achievement.id,
+                achievement.name,
+                achievement.icon
+              );
+            });
+          }
+        };
+
         // Start engine
         engine.start();
 

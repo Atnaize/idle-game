@@ -10,6 +10,7 @@ import { ProducersTab } from '@components/tabs/ProducersTab';
 import { SkillTreeTab } from '@components/tabs/SkillTreeTab';
 import { AchievementsTab } from '@components/tabs/AchievementsTab';
 import { PrestigeTab } from '@components/tabs/PrestigeTab';
+import { ToastContainer } from '@components/toast/ToastContainer';
 import { TABS } from '@/config';
 
 function App() {
@@ -41,6 +42,9 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col pattern-radial-space overflow-hidden">
+      {/* Toast notifications */}
+      <ToastContainer />
+
       <div id="app-wrapper" className="h-full flex flex-col transition-all duration-300 overflow-hidden">
         {/* Fixed Header */}
         <Header />
