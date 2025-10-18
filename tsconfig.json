@@ -23,12 +23,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@engine/*": ["./src/engine/*"],
-      "@components/*": ["./src/components/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@config/*": ["./src/config/*"],
-      "@store/*": ["./src/store/*"]
+
+      // New feature-based structure
+      "@features/*": ["./src/features/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@core/*": ["./src/core/*"],
+
+      // Legacy aliases (for backward compatibility during migration)
+      "@engine/*": ["./src/core/engine/*", "./src/engine/*"],
+      "@components/*": ["./src/shared/components/*", "./src/components/*"],
+      "@hooks/*": ["./src/shared/hooks/*", "./src/hooks/*"],
+      "@utils/*": ["./src/core/utils/*", "./src/utils/*"],
+      "@config/*": ["./src/shared/config/*", "./src/config/*"],
+      "@store/*": ["./src/core/store/*", "./src/store/*"]
     }
   },
   "include": ["src"],

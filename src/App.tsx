@@ -1,17 +1,15 @@
 import { useEffect } from 'react';
-import { useGameStore } from '@store/gameStore';
-import { useTheme } from '@hooks/useTheme';
-import { useMobileLayout } from '@hooks/useMobileLayout';
-import { Header } from '@components/layout/Header';
-import { ResourceDisplay } from '@components/resources/ResourceDisplay';
-import { ClickArea } from '@components/click/ClickArea';
-import { BottomNavigation } from '@components/layout/BottomNavigation';
-import { ProducersTab } from '@components/tabs/ProducersTab';
-import { SkillTreeTab } from '@components/tabs/SkillTreeTab';
-import { AchievementsTab } from '@components/tabs/AchievementsTab';
-import { PrestigeTab } from '@components/tabs/PrestigeTab';
-import { ToastContainer } from '@components/toast/ToastContainer';
-import { TABS } from '@/config';
+import { useGameStore } from '@core/store';
+import { useTheme, useMobileLayout } from '@shared/hooks';
+import { Header, BottomNavigation } from '@shared/components';
+import { ResourceDisplay } from '@features/resources';
+import { ClickArea } from '@features/click';
+import { ProducersTab } from '@features/producers';
+import { SkillTreeTab } from '@features/skilltree';
+import { AchievementsTab } from '@features/achievements';
+import { PrestigeTab } from '@features/prestige';
+import { ToastContainer } from '@features/notifications';
+import { TABS } from '@shared/config';
 
 function App() {
   const { initialized, initializeGame, selectedTab, tick } = useGameStore();
