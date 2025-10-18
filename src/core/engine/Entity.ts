@@ -224,7 +224,25 @@ export abstract class Purchasable extends Entity {
   }
 
   /**
-   * Calculate cost for next level
+   * Calculate the total cost for purchasing the next N levels
+   *
+   * Uses geometric series formula for efficiency when purchasing multiple levels:
+   * Sum = base * start * (ratio - 1) / (multiplier - 1)
+   *
+   * Where:
+   * - base = baseCost for each resource
+   * - start = costMultiplier^currentLevel
+   * - ratio = costMultiplier^levels
+   *
+   * @param levels - Number of levels to purchase (default: 1)
+   * @returns Cost object with resource requirements for all levels
+   *
+   * @example
+   * // Cost for next level
+   * const cost = producer.getNextCost(); // { ore: BigNumber(100) }
+   *
+   * // Cost for next 10 levels (total, not per level)
+   * const bulkCost = producer.getNextCost(10); // { ore: BigNumber(1584) }
    */
   getNextCost(levels: number = 1): Cost {
     const cost: Cost = {};
@@ -258,9 +276,27 @@ export abstract class Purchasable extends Entity {
   }
 
   /**
-   * Calculate how many levels can be afforded
+   * Calculate the maximum number of levels that can be purchased with current resources
    *
-   * Performs iterative calculation up to MAX_AFFORDABLE_CALC_LIMIT for performance
+   * Performs iterative calculation up to MAX_AFFORDABLE_CALC_LIMIT for performance.
+   * Uses a linear search that stops at the first unaffordable level.
+   *
+   * Performance characteristics:
+   * - Time complexity: O(min(n, MAX_AFFORDABLE_CALC_LIMIT)) where n is levels until max
+   * - Space complexity: O(1)
+   * - Capped at 1000 iterations to prevent UI lag with large numbers
+   *
+   * @param resources - Current game resources to check against
+   * @returns Maximum number of affordable levels, or 0 if cannot afford any
+   *
+   * @example
+   * // Check how many levels can be bought with current resources
+   * const maxLevels = producer.getMaxAffordable(gameEngine.resources);
+   * if (maxLevels > 0) {
+   *   producer.increaseLevel(maxLevels);
+   * }
+   *
+   * @see GAME_CONFIG.PERFORMANCE.MAX_AFFORDABLE_CALC_LIMIT for iteration limit
    */
   getMaxAffordable(resources: Record<string, Resource>): number {
     let affordable = 0;

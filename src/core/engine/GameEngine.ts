@@ -439,10 +439,29 @@ export class GameEngine {
   }
 
   /**
-   * Calculate offline progress
+   * Calculate and apply production gains while the player was offline
+   *
+   * Simulates resource production for the time the player was away, up to a configured limit.
+   * Uses the production rates from when the player left (state at last save), not current rates.
+   * Time is capped to prevent exploits and balance gameplay.
+   *
+   * Important notes:
+   * - Offline time is capped at OFFLINE_PROGRESS_LIMIT_MS (default: 1 hour)
+   * - Production is calculated using the saved game state, not current multipliers
+   * - Resources still respect their maximum capacity limits
+   * - No achievements are triggered during offline progress
+   *
+   * @param timeAway - Time away in seconds since last save
+   *
+   * @example
+   * // Calculate offline progress for 30 minutes
+   * gameEngine.calculateOfflineProgress(1800); // 1800 seconds = 30 minutes
+   *
+   * @see GAME_CONFIG.ENGINE.OFFLINE_PROGRESS_LIMIT_MS for maximum offline time
+   * @see produceResources for the actual production calculation
    */
   calculateOfflineProgress(timeAway: number): void {
-    // Limit offline progress
+    // Limit offline progress to prevent exploits
     const effectiveTime = Math.min(timeAway, this.offlineProgressLimit / 1000);
 
     // Simulate production at current rates
