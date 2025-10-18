@@ -538,8 +538,7 @@ export class GameEngine {
         producer.visible = data.visible;
         Logger.debug(`Restored producer ${id}: level=${data.level}`);
         if (data.productionMultiplier) {
-          // Access private field through type assertion
-          (producer as any).productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
+          producer.productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
         }
       } else {
         Logger.warn(`Producer ${id} not found`);
@@ -554,7 +553,7 @@ export class GameEngine {
         upgrade.unlocked = data.unlocked;
         upgrade.visible = data.visible;
         if (data.purchased !== undefined) {
-          (upgrade as any).purchased = data.purchased;
+          upgrade.purchased = data.purchased;
         }
       }
     });
@@ -566,10 +565,10 @@ export class GameEngine {
         achievement.unlocked = data.unlocked;
         achievement.visible = data.visible;
         if (data.completed !== undefined) {
-          (achievement as any).completed = data.completed;
+          achievement.completed = data.completed;
         }
         if (data.progress !== undefined) {
-          (achievement as any).progress = data.progress;
+          achievement.progress = data.progress;
         }
       }
     });
@@ -583,8 +582,8 @@ export class GameEngine {
 
     // Restore prestige
     if (saveData.prestige && this.prestige) {
-      (this.prestige as any).prestigePoints = BigNumber.deserialize(saveData.prestige.points);
-      (this.prestige as any).totalResets = saveData.prestige.totalResets;
+      this.prestige.prestigePoints = BigNumber.deserialize(saveData.prestige.points);
+      this.prestige.totalResets = saveData.prestige.totalResets;
     }
 
     // Restore stats
