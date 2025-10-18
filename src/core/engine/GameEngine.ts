@@ -314,10 +314,12 @@ export class GameEngine {
   purchaseProducer(producerId: ProducerId, amount: number = 1): boolean {
     const producer = this.producers[producerId];
     if (!producer) {
+      Logger.warn(`Cannot purchase producer: ${producerId} not found`);
       return false;
     }
 
     if (producer.isMaxLevel()) {
+      Logger.debug(`Cannot purchase producer: ${producerId} is at max level`);
       return false;
     }
 
@@ -326,10 +328,15 @@ export class GameEngine {
     // Check if can afford
     const canAfford = Object.entries(cost).every(([resourceId, costAmount]) => {
       const resource = this.resources[resourceId];
-      return resource && resource.canAfford(costAmount);
+      if (!resource) {
+        Logger.warn(`Resource ${resourceId} not found for cost check`);
+        return false;
+      }
+      return resource.canAfford(costAmount);
     });
 
     if (!canAfford) {
+      Logger.debug(`Cannot afford ${amount}x ${producerId}`);
       return false;
     }
 
@@ -353,10 +360,12 @@ export class GameEngine {
   purchaseUpgrade(upgradeId: UpgradeId): boolean {
     const upgrade = this.upgrades[upgradeId];
     if (!upgrade) {
+      Logger.warn(`Cannot purchase upgrade: ${upgradeId} not found`);
       return false;
     }
 
     if (upgrade.isMaxLevel()) {
+      Logger.debug(`Cannot purchase upgrade: ${upgradeId} is at max level`);
       return false;
     }
 
@@ -365,10 +374,15 @@ export class GameEngine {
     // Check if can afford
     const canAfford = Object.entries(cost).every(([resourceId, costAmount]) => {
       const resource = this.resources[resourceId];
-      return resource && resource.canAfford(costAmount);
+      if (!resource) {
+        Logger.warn(`Resource ${resourceId} not found for cost check`);
+        return false;
+      }
+      return resource.canAfford(costAmount);
     });
 
     if (!canAfford) {
+      Logger.debug(`Cannot afford upgrade ${upgradeId}`);
       return false;
     }
 
@@ -391,29 +405,37 @@ export class GameEngine {
    */
   performPrestige(): boolean {
     if (!this.prestige) {
+      Logger.error('Cannot perform prestige: prestige system not initialized');
       return false;
     }
 
     const context = this.getGameContext();
 
     if (!this.prestige.canPrestige(context)) {
+      Logger.debug('Cannot prestige: requirements not met');
       return false;
     }
 
-    const result = this.prestige.performPrestige(context);
+    try {
+      const result = this.prestige.performPrestige(context);
 
-    // Apply new state
-    this.resources = result.newState.resources;
-    this.producers = result.newState.producers;
-    this.upgrades = result.newState.upgrades;
-    // Keep achievements
+      // Apply new state
+      this.resources = result.newState.resources;
+      this.producers = result.newState.producers;
+      this.upgrades = result.newState.upgrades;
+      // Keep achievements
 
-    this.stats.totalPrestige += 1;
+      this.stats.totalPrestige += 1;
 
-    // Invalidate context since we replaced the resources/producers/upgrades objects
-    this.invalidateContext();
+      // Invalidate context since we replaced the resources/producers/upgrades objects
+      this.invalidateContext();
 
-    return true;
+      Logger.info(`Prestige completed: gained ${result.pointsGained.toFixed(2)} points, total ${result.totalPoints.toFixed(2)}`);
+      return true;
+    } catch (error) {
+      Logger.error('Prestige failed with error:', error);
+      return false;
+    }
   }
 
   /**

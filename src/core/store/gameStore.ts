@@ -168,11 +168,18 @@ export const useGameStore = create<GameState>()(
       purchaseProducer: (producerId, amount) => {
         const { engine, buyAmount: stateBuyAmount } = get();
         if (!engine) {
+          Logger.error('Cannot purchase producer: engine not initialized');
           return false;
         }
 
         const producer = engine.producers[producerId];
         if (!producer) {
+          Logger.warn(`Producer ${producerId} not found`);
+          return false;
+        }
+
+        if (producer.isMaxLevel()) {
+          Logger.debug(`Producer ${producerId} is already at max level`);
           return false;
         }
 
@@ -188,12 +195,16 @@ export const useGameStore = create<GameState>()(
         }
 
         if (purchaseAmount === 0) {
+          Logger.debug(`Cannot afford any levels of producer ${producerId}`);
           return false;
         }
 
         const success = engine.purchaseProducer(producerId, purchaseAmount);
         if (success) {
           get().forceTick();
+          Logger.debug(`Purchased ${purchaseAmount}x ${producerId}, new level: ${producer.level}`);
+        } else {
+          Logger.warn(`Failed to purchase producer ${producerId}`);
         }
         return success;
       },
@@ -201,12 +212,27 @@ export const useGameStore = create<GameState>()(
       purchaseUpgrade: (upgradeId) => {
         const { engine } = get();
         if (!engine) {
+          Logger.error('Cannot purchase upgrade: engine not initialized');
+          return false;
+        }
+
+        const upgrade = engine.upgrades[upgradeId];
+        if (!upgrade) {
+          Logger.warn(`Upgrade ${upgradeId} not found`);
+          return false;
+        }
+
+        if (upgrade.isMaxLevel()) {
+          Logger.debug(`Upgrade ${upgradeId} is already at max level`);
           return false;
         }
 
         const success = engine.purchaseUpgrade(upgradeId);
         if (success) {
           get().forceTick();
+          Logger.debug(`Purchased upgrade ${upgradeId}, new level: ${upgrade.level}`);
+        } else {
+          Logger.debug(`Cannot afford upgrade ${upgradeId}`);
         }
         return success;
       },
@@ -214,12 +240,28 @@ export const useGameStore = create<GameState>()(
       performPrestige: () => {
         const { engine } = get();
         if (!engine) {
+          Logger.error('Cannot perform prestige: engine not initialized');
           return false;
         }
 
+        if (!engine.prestige) {
+          Logger.error('Prestige system not available');
+          return false;
+        }
+
+        const context = engine.getGameContext();
+        if (!engine.prestige.canPrestige(context)) {
+          Logger.debug('Cannot prestige: requirements not met');
+          return false;
+        }
+
+        const pointsGained = engine.prestige.calculatePointsGain(context);
         const success = engine.performPrestige();
         if (success) {
           get().forceTick();
+          Logger.info(`Prestige successful! Gained ${pointsGained.toFixed(2)} prestige points`);
+        } else {
+          Logger.warn('Prestige failed');
         }
         return success;
       },
