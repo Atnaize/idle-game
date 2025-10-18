@@ -1,4 +1,5 @@
 import { BigNumber } from './BigNumber';
+import { Logger } from '@core/utils';
 import type {
   GameContext,
   ResourceId,
@@ -504,11 +505,11 @@ export class GameEngine {
   deserialize(saveData: SaveData): { timeAway: number; maxOfflineTime: number } {
     // Validate save version
     if (saveData.version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
-      console.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${saveData.version}`);
+      Logger.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${saveData.version}`);
       // In the future, implement migration logic here
     }
 
-    console.log('Deserializing:', {
+    Logger.debug('Deserializing:', {
       resources: Object.keys(saveData.resources).length,
       producers: Object.keys(saveData.producers).length,
       achievements: Object.keys(saveData.achievements).length,
@@ -524,7 +525,7 @@ export class GameEngine {
         resource.unlocked = data.unlocked;
         resource.visible = data.visible;
       } else {
-        console.warn(`Resource ${id} not found`);
+        Logger.warn(`Resource ${id} not found`);
       }
     });
 
@@ -535,13 +536,13 @@ export class GameEngine {
         producer.level = data.level;
         producer.unlocked = data.unlocked;
         producer.visible = data.visible;
-        console.log(`Restored producer ${id}: level=${data.level}`);
+        Logger.debug(`Restored producer ${id}: level=${data.level}`);
         if (data.productionMultiplier) {
           // Access private field through type assertion
           (producer as any).productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
         }
       } else {
-        console.warn(`Producer ${id} not found`);
+        Logger.warn(`Producer ${id} not found`);
       }
     });
 
@@ -598,7 +599,7 @@ export class GameEngine {
 
     if (timeAway > 5) { // Only if more than 5 seconds away
       this.calculateOfflineProgress(timeAway);
-      console.log(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
+      Logger.debug(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
     }
 
     // Invalidate context to force rebuild with new state

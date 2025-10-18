@@ -5,4 +5,5 @@
 
 export { NumberFormatter } from './NumberFormatter';
 export { Formulas } from './Formulas';
+export { Logger } from './Logger';
 export * from './PrestigeFormulas';

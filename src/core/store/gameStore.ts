@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GameEngine, BigNumber } from '@core/engine';
+import { Logger } from '@core/utils';
 import { createResources } from '@features/resources';
 import { createProducers } from '@features/producers';
 import { createUpgrades } from '@features/upgrades';
@@ -231,7 +232,7 @@ export const useGameStore = create<GameState>()(
 
         const saveData = engine.serialize();
         localStorage.setItem('idle-game-save', JSON.stringify(saveData));
-        console.log('Game saved:', {
+        Logger.debug('Game saved:', {
           producers: Object.keys(saveData.producers).length,
           achievements: Object.keys(saveData.achievements).length,
           timestamp: new Date(saveData.timestamp).toLocaleString(),
@@ -242,18 +243,18 @@ export const useGameStore = create<GameState>()(
         try {
           const savedData = localStorage.getItem('idle-game-save');
           if (!savedData) {
-            console.log('No save data found');
+            Logger.debug('No save data found');
             return;
           }
 
           const { engine } = get();
           if (!engine) {
-            console.warn('Cannot load game: engine not initialized');
+            Logger.warn('Cannot load game: engine not initialized');
             return;
           }
 
           const saveData = JSON.parse(savedData);
-          console.log('Loading game:', {
+          Logger.debug('Loading game:', {
             producers: Object.keys(saveData.producers || {}).length,
             achievements: Object.keys(saveData.achievements || {}).length,
             timestamp: new Date(saveData.timestamp).toLocaleString(),
@@ -269,9 +270,9 @@ export const useGameStore = create<GameState>()(
           // Force UI update
           get().forceTick();
 
-          console.log('Game loaded successfully');
+          Logger.debug('Game loaded successfully');
         } catch (error) {
-          console.error('Failed to load game:', error);
+          Logger.error('Failed to load game:', error);
         }
       },
 
