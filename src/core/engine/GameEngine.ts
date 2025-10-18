@@ -519,26 +519,20 @@ export class GameEngine {
   }
 
   /**
-   * Deserialize game state from save data
-   * This method restores the saved state into the current entities
-   * Must be called after all entities have been added to the engine
-   * Returns offline progress info for display
+   * Validate save data version and log warning if mismatch
    */
-  deserialize(saveData: SaveData): { timeAway: number; maxOfflineTime: number } {
-    // Validate save version
-    if (saveData.version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
-      Logger.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${saveData.version}`);
-      // In the future, implement migration logic here
+  private validateSaveVersion(version: string): void {
+    if (version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
+      Logger.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${version}`);
+      // TODO: Implement migration logic for version updates
     }
+  }
 
-    Logger.debug('Deserializing:', {
-      resources: Object.keys(saveData.resources).length,
-      producers: Object.keys(saveData.producers).length,
-      achievements: Object.keys(saveData.achievements).length,
-    });
-
-    // Restore resources
-    Object.entries(saveData.resources).forEach(([id, data]) => {
+  /**
+   * Restore resources from save data
+   */
+  private deserializeResources(resourcesData: Record<ResourceId, SerializedData>): void {
+    Object.entries(resourcesData).forEach(([id, data]) => {
       const resource = this.resources[id];
       if (resource) {
         if (data.amount) {
@@ -547,12 +541,16 @@ export class GameEngine {
         resource.unlocked = data.unlocked;
         resource.visible = data.visible;
       } else {
-        Logger.warn(`Resource ${id} not found`);
+        Logger.warn(`Resource ${id} not found during deserialization`);
       }
     });
+  }
 
-    // Restore producers
-    Object.entries(saveData.producers).forEach(([id, data]) => {
+  /**
+   * Restore producers from save data
+   */
+  private deserializeProducers(producersData: Record<ProducerId, SerializedData>): void {
+    Object.entries(producersData).forEach(([id, data]) => {
       const producer = this.producers[id];
       if (producer) {
         producer.level = data.level;
@@ -563,12 +561,16 @@ export class GameEngine {
           producer.productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
         }
       } else {
-        Logger.warn(`Producer ${id} not found`);
+        Logger.warn(`Producer ${id} not found during deserialization`);
       }
     });
+  }
 
-    // Restore upgrades
-    Object.entries(saveData.upgrades).forEach(([id, data]) => {
+  /**
+   * Restore upgrades from save data
+   */
+  private deserializeUpgrades(upgradesData: Record<UpgradeId, SerializedData>): void {
+    Object.entries(upgradesData).forEach(([id, data]) => {
       const upgrade = this.upgrades[id];
       if (upgrade) {
         upgrade.level = data.level;
@@ -579,9 +581,13 @@ export class GameEngine {
         }
       }
     });
+  }
 
-    // Restore achievements
-    Object.entries(saveData.achievements).forEach(([id, data]) => {
+  /**
+   * Restore achievements from save data
+   */
+  private deserializeAchievements(achievementsData: Record<AchievementId, SerializedData>): void {
+    Object.entries(achievementsData).forEach(([id, data]) => {
       const achievement = this.achievements[id];
       if (achievement) {
         achievement.unlocked = data.unlocked;
@@ -594,28 +600,35 @@ export class GameEngine {
         }
       }
     });
+  }
 
-    // Restore click power
-    if (saveData.clickPower && this.clickPower) {
-      this.clickPower.level = saveData.clickPower.level;
-      this.clickPower.unlocked = saveData.clickPower.unlocked;
-      this.clickPower.visible = saveData.clickPower.visible;
+  /**
+   * Restore click power from save data
+   */
+  private deserializeClickPower(clickPowerData?: SerializedData): void {
+    if (clickPowerData && this.clickPower) {
+      this.clickPower.level = clickPowerData.level;
+      this.clickPower.unlocked = clickPowerData.unlocked;
+      this.clickPower.visible = clickPowerData.visible;
     }
+  }
 
-    // Restore prestige
-    if (saveData.prestige && this.prestige) {
-      this.prestige.prestigePoints = BigNumber.deserialize(saveData.prestige.points);
-      this.prestige.totalResets = saveData.prestige.totalResets;
+  /**
+   * Restore prestige from save data
+   */
+  private deserializePrestige(prestigeData?: { points: string; totalResets: number }): void {
+    if (prestigeData && this.prestige) {
+      this.prestige.prestigePoints = BigNumber.deserialize(prestigeData.points);
+      this.prestige.totalResets = prestigeData.totalResets;
     }
+  }
 
-    // Restore stats
-    if (saveData.stats) {
-      this.stats = { ...saveData.stats };
-    }
-
-    // Calculate offline progress
+  /**
+   * Calculate and return offline progress information
+   */
+  private processOfflineProgress(savedTimestamp: number): { timeAway: number; maxOfflineTime: number } {
     const now = Date.now();
-    const timeAway = (now - saveData.timestamp) / 1000; // Convert to seconds
+    const timeAway = (now - savedTimestamp) / 1000; // Convert to seconds
     const maxOfflineTime = this.offlineProgressLimit / 1000; // Convert to seconds
 
     // Only calculate offline progress if away for more than configured threshold
@@ -624,9 +637,43 @@ export class GameEngine {
       Logger.debug(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
     }
 
+    return { timeAway, maxOfflineTime };
+  }
+
+  /**
+   * Deserialize game state from save data
+   * This method restores the saved state into the current entities
+   * Must be called after all entities have been added to the engine
+   * Returns offline progress info for display
+   */
+  deserialize(saveData: SaveData): { timeAway: number; maxOfflineTime: number } {
+    this.validateSaveVersion(saveData.version);
+
+    Logger.debug('Deserializing:', {
+      resources: Object.keys(saveData.resources).length,
+      producers: Object.keys(saveData.producers).length,
+      achievements: Object.keys(saveData.achievements).length,
+    });
+
+    // Restore all game entities
+    this.deserializeResources(saveData.resources);
+    this.deserializeProducers(saveData.producers);
+    this.deserializeUpgrades(saveData.upgrades);
+    this.deserializeAchievements(saveData.achievements);
+    this.deserializeClickPower(saveData.clickPower);
+    this.deserializePrestige(saveData.prestige);
+
+    // Restore game stats
+    if (saveData.stats) {
+      this.stats = { ...saveData.stats };
+    }
+
+    // Process offline progress and get timing information
+    const offlineInfo = this.processOfflineProgress(saveData.timestamp);
+
     // Invalidate context to force rebuild with new state
     this.invalidateContext();
 
-    return { timeAway, maxOfflineTime };
+    return offlineInfo;
   }
 }
