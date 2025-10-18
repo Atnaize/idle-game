@@ -74,6 +74,8 @@ export class Prestige {
 
   /**
    * Perform prestige reset
+   * IMPORTANT: This method mutates internal state (prestigePoints, totalResets)
+   * The mutation is intentional as prestige state persists across resets
    */
   performPrestige(gameState: GameContext): PrestigeResult {
     const pointsGained = this.calculatePointsGain(gameState);
@@ -82,12 +84,14 @@ export class Prestige {
       throw new Error('Cannot prestige: not enough currency');
     }
 
-    // Add prestige points
+    // Create new game state first (before mutating state)
+    // This ensures we can safely revert if something goes wrong
+    const newState = this.resetGameState(gameState);
+
+    // Only after successful state creation, update prestige stats
+    // These mutations are safe because prestige state persists across resets
     this.prestigePoints = this.prestigePoints.add(pointsGained);
     this.totalResets += 1;
-
-    // Create new game state
-    const newState = this.resetGameState(gameState);
 
     return {
       newState,

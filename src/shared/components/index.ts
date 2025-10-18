@@ -14,3 +14,4 @@ export { StyleShowcase } from './StyleShowcase';
 export { Header } from './Header';
 export { BottomNavigation } from './BottomNavigation';
 export { SettingsMenu } from './SettingsMenu';
+export { ErrorBoundary } from './ErrorBoundary';
