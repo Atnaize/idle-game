@@ -41,6 +41,10 @@ export class GameEngine {
   lastAutoSave: number;
   offlineProgressLimit: number;
 
+  // Context caching for performance
+  private _cachedContext: GameContext | null;
+  private _contextDirty: boolean;
+
   constructor(config: GameEngineConfig = {}) {
     this.resources = {};
     this.producers = {};
@@ -62,6 +66,9 @@ export class GameEngine {
     this.autoSaveInterval = config.autoSaveInterval || 30000; // 30 seconds
     this.lastAutoSave = Date.now();
     this.offlineProgressLimit = config.offlineProgressLimit || 3600000; // 1 hour
+
+    this._cachedContext = null;
+    this._contextDirty = true;
   }
 
   /**
@@ -69,6 +76,7 @@ export class GameEngine {
    */
   addResource(resource: Resource): void {
     this.resources[resource.id] = resource;
+    this.invalidateContext();
   }
 
   /**
@@ -76,6 +84,7 @@ export class GameEngine {
    */
   addProducer(producer: Producer): void {
     this.producers[producer.id] = producer;
+    this.invalidateContext();
   }
 
   /**
@@ -83,6 +92,7 @@ export class GameEngine {
    */
   addUpgrade(upgrade: Upgrade): void {
     this.upgrades[upgrade.id] = upgrade;
+    this.invalidateContext();
   }
 
   /**
@@ -90,6 +100,7 @@ export class GameEngine {
    */
   addAchievement(achievement: Achievement): void {
     this.achievements[achievement.id] = achievement;
+    this.invalidateContext();
   }
 
   /**
@@ -97,6 +108,7 @@ export class GameEngine {
    */
   setClickPower(clickPower: ClickPower): void {
     this.clickPower = clickPower;
+    this.invalidateContext();
   }
 
   /**
@@ -104,6 +116,7 @@ export class GameEngine {
    */
   setPrestige(prestige: Prestige): void {
     this.prestige = prestige;
+    this.invalidateContext();
   }
 
   /**
@@ -320,6 +333,9 @@ export class GameEngine {
     // Increase level
     producer.increaseLevel(amount);
 
+    // Context doesn't need invalidation here - references stay the same
+    // Only the internal state of entities changes
+
     return true;
   }
 
@@ -356,6 +372,9 @@ export class GameEngine {
     // Purchase upgrade
     upgrade.purchase();
 
+    // Context doesn't need invalidation here - references stay the same
+    // Only the internal state of entities changes
+
     return true;
   }
 
@@ -383,6 +402,9 @@ export class GameEngine {
 
     this.stats.totalPrestige += 1;
 
+    // Invalidate context since we replaced the resources/producers/upgrades objects
+    this.invalidateContext();
+
     return true;
   }
 
@@ -401,16 +423,29 @@ export class GameEngine {
 
   /**
    * Get current game context
+   * Uses caching to avoid creating new object on every call
    */
   getGameContext(): GameContext {
-    return {
-      resources: this.resources,
-      producers: this.producers,
-      upgrades: this.upgrades,
-      achievements: this.achievements,
-      clickPower: this.clickPower ?? undefined,
-      prestige: this.prestige ?? undefined,
-    };
+    if (this._contextDirty || this._cachedContext === null) {
+      this._cachedContext = {
+        resources: this.resources,
+        producers: this.producers,
+        upgrades: this.upgrades,
+        achievements: this.achievements,
+        clickPower: this.clickPower ?? undefined,
+        prestige: this.prestige ?? undefined,
+      };
+      this._contextDirty = false;
+    }
+    return this._cachedContext;
+  }
+
+  /**
+   * Mark context as dirty to force rebuild on next access
+   * Call this after any state change that affects game context
+   */
+  private invalidateContext(): void {
+    this._contextDirty = true;
   }
 
   /**
