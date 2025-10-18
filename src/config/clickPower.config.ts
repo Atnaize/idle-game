@@ -3,8 +3,10 @@
  * Defines click power system and click upgrades
  */
 
-import { ClickPower, ClickUpgrade } from '@engine/ClickPower';
+import { ClickPower } from '@engine/ClickPower';
+import { Upgrade } from '@engine/Producer';
 import type { GameContext } from '@/types/core';
+import { BigNumber } from '@engine/BigNumber';
 
 // Click Power ID constants
 export const CLICK_POWER = {
@@ -42,27 +44,32 @@ export const createClickPower = () => {
 // Click Upgrades factory function
 export const createClickUpgrades = () => {
   return {
-    [CLICK_UPGRADES.CLICK_POWER_1]: new ClickUpgrade(CLICK_UPGRADES.CLICK_POWER_1, {
+    [CLICK_UPGRADES.CLICK_POWER_1]: new Upgrade(CLICK_UPGRADES.CLICK_POWER_1, {
       name: 'Stronger Clicks',
       description: 'Double click power',
       icon: '💪',
       baseCost: { ore: 25 },
       costMultiplier: 2.5,
       maxLevel: 10,
-      clickPowerTarget: 'value',
+      effectType: 'multiplier',
       effectValue: 2,
       unlocked: true,
       visible: true,
+      target: (gameState: GameContext, effect: BigNumber) => {
+        if (gameState.clickPower) {
+          gameState.clickPower.applyBoost(effect);
+        }
+      },
     }),
 
-    [CLICK_UPGRADES.CRIT_CHANCE_1]: new ClickUpgrade(CLICK_UPGRADES.CRIT_CHANCE_1, {
+    [CLICK_UPGRADES.CRIT_CHANCE_1]: new Upgrade(CLICK_UPGRADES.CRIT_CHANCE_1, {
       name: 'Lucky Strikes',
       description: '+5% crit chance per level',
       icon: '🍀',
       baseCost: { ore: 300 },
       costMultiplier: 3,
       maxLevel: 10,
-      clickPowerTarget: 'crit_chance',
+      effectType: 'additive',
       effectValue: 0.05,
       unlocked: false,
       visible: true,
@@ -70,22 +77,32 @@ export const createClickUpgrades = () => {
         const clickPower1 = ctx.upgrades[CLICK_UPGRADES.CLICK_POWER_1];
         return clickPower1 && clickPower1.level >= 3;
       },
+      target: (gameState: GameContext, effect: BigNumber) => {
+        if (gameState.clickPower) {
+          gameState.clickPower.addCritChance(effect.toNumber());
+        }
+      },
     }),
 
-    [CLICK_UPGRADES.CRIT_MULTIPLIER_1]: new ClickUpgrade(CLICK_UPGRADES.CRIT_MULTIPLIER_1, {
+    [CLICK_UPGRADES.CRIT_MULTIPLIER_1]: new Upgrade(CLICK_UPGRADES.CRIT_MULTIPLIER_1, {
       name: 'Devastating Blows',
       description: '+1x crit multiplier per level',
       icon: '💥',
       baseCost: { ore: 1500 },
       costMultiplier: 4,
       maxLevel: 5,
-      clickPowerTarget: 'crit_multiplier',
+      effectType: 'additive',
       effectValue: 1,
       unlocked: false,
       visible: true,
       unlockCondition: (ctx: GameContext) => {
         const critChance = ctx.upgrades[CLICK_UPGRADES.CRIT_CHANCE_1];
         return critChance && critChance.level >= 3;
+      },
+      target: (gameState: GameContext, effect: BigNumber) => {
+        if (gameState.clickPower) {
+          gameState.clickPower.addCritMultiplier(effect.toNumber());
+        }
       },
     }),
   };

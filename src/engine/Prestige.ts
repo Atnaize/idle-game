@@ -153,8 +153,8 @@ export class Prestige {
 
   static deserialize(data: SerializedData, config: PrestigeConfig): Prestige {
     const prestige = new Prestige(data.id, config);
-    prestige.prestigePoints = BigNumber.deserialize(data.prestigePoints);
-    prestige.totalResets = data.totalResets;
+    prestige.prestigePoints = BigNumber.deserialize((data.prestigePoints as string) || '0');
+    prestige.totalResets = (data.totalResets as number) || 0;
     return prestige;
   }
 }

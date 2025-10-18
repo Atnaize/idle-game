@@ -1,6 +1,20 @@
 import { memo } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import { SkillTree } from './SkillTree';
+import { NumberFormatter } from '@utils/NumberFormatter';
+
+interface Upgrade {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  level: number;
+  maxLevel: number;
+  baseCost: Record<string, number>;
+  costMultiplier: number;
+  unlocked: boolean;
+  purchased: boolean;
+}
 
 /**
  * Container component that connects SkillTree to the game store
@@ -25,7 +39,7 @@ export const SkillTreeContainer = memo(() => {
   }
 
   // Transform engine data to SkillTree format
-  const upgrades: Record<string, any> = {};
+  const upgrades: Record<string, Upgrade> = {};
 
   // Access upgrades directly from engine.upgrades (it's a Record)
   Object.values(engine.upgrades).forEach((upgrade) => {
@@ -36,7 +50,7 @@ export const SkillTreeContainer = memo(() => {
       icon: upgrade.icon,
       level: upgrade.level,
       maxLevel: upgrade.maxLevel,
-      baseCost: upgrade.baseCost,
+      baseCost: NumberFormatter.costToNumbers(upgrade.baseCost),
       costMultiplier: upgrade.costMultiplier,
       unlocked: upgrade.unlocked,
       purchased: upgrade.purchased,

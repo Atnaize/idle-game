@@ -3,7 +3,7 @@ import { Ore } from '@engine/resources';
 import { Miner, Drill, Complex, QuantumDevice } from '@engine/producers';
 import { Upgrade } from '@engine/Producer';
 import { MilestoneAchievement, PurchaseAchievement } from '@engine/Achievement';
-import { ClickPower, ClickUpgrade } from '@engine/ClickPower';
+import { ClickPower } from '@engine/ClickPower';
 import { Prestige } from '@engine/Prestige';
 import { Formulas } from '@utils/Formulas';
 import type { GameContext } from '@/types/core';
@@ -386,56 +386,7 @@ export const createClickPower = () => {
   });
 };
 
-export const createClickUpgrades = () => {
-  return {
-    clickPower1: new ClickUpgrade('clickPower1', {
-      name: 'Stronger Clicks',
-      description: 'Double click power',
-      icon: '💪',
-      baseCost: { ore: 25 },
-      costMultiplier: 2.5,
-      maxLevel: 10,
-      clickPowerTarget: 'value',
-      effectValue: 2,
-      unlocked: true,
-      visible: true,
-    }),
-
-    critChance1: new ClickUpgrade('critChance1', {
-      name: 'Lucky Strikes',
-      description: '+5% crit chance per level',
-      icon: '🍀',
-      baseCost: { ore: 300 },
-      costMultiplier: 3,
-      maxLevel: 10,
-      clickPowerTarget: 'crit_chance',
-      effectValue: 0.05,
-      unlocked: false,
-      visible: true,
-      unlockCondition: (ctx: GameContext) => {
-        const clickPower1 = ctx.upgrades['clickPower1'];
-        return clickPower1 && clickPower1.level >= 3;
-      },
-    }),
-
-    critMultiplier1: new ClickUpgrade('critMultiplier1', {
-      name: 'Devastating Blows',
-      description: '+1x crit multiplier per level',
-      icon: '💥',
-      baseCost: { ore: 1500 },
-      costMultiplier: 4,
-      maxLevel: 5,
-      clickPowerTarget: 'crit_multiplier',
-      effectValue: 1,
-      unlocked: false,
-      visible: true,
-      unlockCondition: (ctx: GameContext) => {
-        const critChance = ctx.upgrades['critChance1'];
-        return critChance && critChance.level >= 3;
-      },
-    }),
-  };
-};
+// Click upgrades moved to clickPower.config.ts
 
 // ===== PRESTIGE =====
 

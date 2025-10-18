@@ -91,7 +91,7 @@ export const useGameStore = create<GameState>()(
 
         // Add click upgrades (these are regular upgrades that target click power)
         const clickUpgrades = createClickUpgrades();
-        Object.values(clickUpgrades).forEach((upgrade: any) => {
+        Object.values(clickUpgrades).forEach((upgrade) => {
           engine.addUpgrade(upgrade);
         });
 

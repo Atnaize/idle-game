@@ -1,4 +1,9 @@
 import { BigNumber } from '@engine/BigNumber';
+import type { Resource } from '@engine/Entity';
+import type { Producer, Upgrade } from '@engine/Producer';
+import type { Achievement } from '@engine/Achievement';
+import type { ClickPower } from '@engine/ClickPower';
+import type { Prestige } from '@engine/Prestige';
 
 /**
  * Core type definitions for the idle game
@@ -10,12 +15,12 @@ export type UpgradeId = string;
 export type AchievementId = string;
 
 export interface GameContext {
-  resources: Record<ResourceId, any>;
-  producers: Record<ProducerId, any>;
-  upgrades: Record<UpgradeId, any>;
-  achievements: Record<AchievementId, any>;
-  clickPower?: any;
-  prestige?: any;
+  resources: Record<ResourceId, Resource>;
+  producers: Record<ProducerId, Producer>;
+  upgrades: Record<UpgradeId, Upgrade>;
+  achievements: Record<AchievementId, Achievement>;
+  clickPower?: ClickPower;
+  prestige?: Prestige;
   deltaTime?: number;
 }
 
@@ -32,7 +37,14 @@ export interface SerializedData {
   level: number;
   unlocked: boolean;
   visible: boolean;
-  [key: string]: any;
+  amount?: string;
+  points?: string;
+  totalResets?: number;
+  totalProduced?: string;
+  progress?: number;
+  completed?: boolean;
+  purchased?: boolean;
+  [key: string]: unknown;
 }
 
 export interface UnlockCondition {
@@ -104,10 +116,6 @@ export interface ClickPowerConfig extends PurchasableConfig {
   baseClickValue: BigNumber | number | string;
   critChance?: number;
   critMultiplier?: number;
-}
-
-export interface ClickUpgradeConfig extends UpgradeConfig {
-  clickPowerTarget?: 'value' | 'crit_chance' | 'crit_multiplier';
 }
 
 export interface SaveData {

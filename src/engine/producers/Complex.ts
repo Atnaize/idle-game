@@ -34,8 +34,8 @@ export class Complex extends Producer {
 
     // Count total levels of lower tier producers
     let totalLevels = 0;
-    Object.values(context.producers).forEach((producer: any) => {
-      if (producer.tier < this.tier) {
+    Object.values(context.producers).forEach((producer) => {
+      if ('tier' in producer && typeof producer.tier === 'number' && producer.tier < this.tier) {
         totalLevels += producer.level;
       }
     });

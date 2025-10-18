@@ -7,6 +7,7 @@ import type {
   AchievementId,
   SaveData,
   GameStats,
+  SerializedData,
 } from '@/types/core';
 import type { Resource } from './Entity';
 import type { Producer, Upgrade } from './Producer';
@@ -415,22 +416,22 @@ export class GameEngine {
    * Serialize game state for saving
    */
   serialize(): SaveData {
-    const resources: Record<ResourceId, any> = {};
+    const resources: Record<ResourceId, SerializedData> = {};
     Object.entries(this.resources).forEach(([id, resource]) => {
       resources[id] = resource.serialize();
     });
 
-    const producers: Record<ProducerId, any> = {};
+    const producers: Record<ProducerId, SerializedData> = {};
     Object.entries(this.producers).forEach(([id, producer]) => {
       producers[id] = producer.serialize();
     });
 
-    const upgrades: Record<UpgradeId, any> = {};
+    const upgrades: Record<UpgradeId, SerializedData> = {};
     Object.entries(this.upgrades).forEach(([id, upgrade]) => {
       upgrades[id] = upgrade.serialize();
     });
 
-    const achievements: Record<AchievementId, any> = {};
+    const achievements: Record<AchievementId, SerializedData> = {};
     Object.entries(this.achievements).forEach(([id, achievement]) => {
       achievements[id] = achievement.serialize();
     });

@@ -126,8 +126,8 @@ export class Achievement extends Entity {
 
   static deserialize(data: SerializedData, config: AchievementConfig): Achievement {
     const achievement = new Achievement(data.id, config);
-    achievement.completed = data.completed;
-    achievement.progress = data.progress;
+    achievement.completed = data.completed ?? false;
+    achievement.progress = data.progress ?? 0;
     achievement.unlocked = data.unlocked;
     achievement.visible = data.visible;
     return achievement;

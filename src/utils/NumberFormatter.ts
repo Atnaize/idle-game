@@ -93,4 +93,16 @@ export class NumberFormatter {
 
     return `${this.format(value, 3)} (${num.toExponential(2)})`;
   }
+
+  /**
+   * Convert Cost object to plain numbers for UI display
+   * Handles BigNumber | number | string values
+   */
+  static costToNumbers(cost: Record<string, BigNumber | number | string>): Record<string, number> {
+    const numbers: Record<string, number> = {};
+    for (const [key, value] of Object.entries(cost)) {
+      numbers[key] = BigNumber.from(value).toNumber();
+    }
+    return numbers;
+  }
 }

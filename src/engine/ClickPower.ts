@@ -2,9 +2,7 @@ import { Purchasable } from './Entity';
 import { BigNumber } from './BigNumber';
 import type {
   ClickPowerConfig,
-  ClickUpgradeConfig,
   SerializedData,
-  GameContext,
 } from '@/types/core';
 
 export interface ClickResult {
@@ -93,9 +91,9 @@ export class ClickPower extends Purchasable {
     clickPower.level = data.level;
     clickPower.unlocked = data.unlocked;
     clickPower.visible = data.visible;
-    clickPower.clickMultiplier = BigNumber.deserialize(data.clickMultiplier);
-    clickPower.critChance = data.critChance;
-    clickPower.critMultiplier = data.critMultiplier;
+    clickPower.clickMultiplier = BigNumber.deserialize(data.clickMultiplier as string);
+    clickPower.critChance = data.critChance as number;
+    clickPower.critMultiplier = data.critMultiplier as number;
     return clickPower;
   }
 
@@ -115,117 +113,6 @@ export class ClickPower extends Purchasable {
     });
     clone.level = this.level;
     clone.clickMultiplier = new BigNumber(this.clickMultiplier);
-    return clone;
-  }
-}
-
-/**
- * ClickUpgrade - Special upgrades for click power
- */
-export class ClickUpgrade extends Purchasable {
-  clickPowerTarget: 'value' | 'crit_chance' | 'crit_multiplier';
-  effectValue: number;
-  unlockCondition: ((context: GameContext) => boolean) | null;
-
-  constructor(id: string, config: ClickUpgradeConfig) {
-    super(id, config, 'click_upgrade');
-
-    this.maxLevel = config.maxLevel || 10;
-    this.clickPowerTarget = config.clickPowerTarget || 'value';
-    this.effectValue = config.effectValue || 2;
-    this.unlockCondition = config.unlockCondition || null;
-  }
-
-  /**
-   * Check unlock condition
-   */
-  checkUnlock(context: GameContext): boolean {
-    if (this.unlocked) {
-      return true;
-    }
-
-    if (!this.unlockCondition) {
-      return true;
-    }
-
-    return this.unlockCondition(context);
-  }
-
-  /**
-   * Get current effect value (for display in UI)
-   */
-  getEffect(): BigNumber {
-    if (this.level === 0) {
-      return BigNumber.zero();
-    }
-
-    switch (this.clickPowerTarget) {
-      case 'value':
-        return BigNumber.from(this.effectValue).pow(this.level);
-      case 'crit_chance':
-        return BigNumber.from(this.effectValue * this.level);
-      case 'crit_multiplier':
-        return BigNumber.from(this.effectValue * this.level);
-      default:
-        return BigNumber.one();
-    }
-  }
-
-  /**
-   * Purchase upgrade
-   */
-  purchase(): boolean {
-    if (this.isMaxLevel()) {
-      return false;
-    }
-
-    this.increaseLevel(1);
-    return true;
-  }
-
-  /**
-   * Apply upgrade effect to game context (called by GameEngine)
-   */
-  apply(context: GameContext): void {
-    if (this.level === 0) {
-      return;
-    }
-
-    const clickPower = context.clickPower;
-    if (!clickPower) {
-      return;
-    }
-
-    switch (this.clickPowerTarget) {
-      case 'value':
-        const multiplier = BigNumber.from(this.effectValue).pow(this.level);
-        clickPower.applyBoost(multiplier);
-        break;
-
-      case 'crit_chance':
-        clickPower.addCritChance(this.effectValue * this.level);
-        break;
-
-      case 'crit_multiplier':
-        clickPower.addCritMultiplier(this.effectValue * this.level);
-        break;
-    }
-  }
-
-  clone(): ClickUpgrade {
-    const clone = new ClickUpgrade(this.id, {
-      name: this.name,
-      description: this.description,
-      icon: this.icon,
-      baseCost: this.baseCost,
-      costMultiplier: this.costMultiplier,
-      maxLevel: this.maxLevel,
-      clickPowerTarget: this.clickPowerTarget,
-      effectValue: this.effectValue,
-      unlocked: this.unlocked,
-      visible: this.visible,
-    });
-    clone.level = this.level;
     return clone;
   }
 }

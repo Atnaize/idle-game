@@ -138,7 +138,7 @@ export class Producer extends Purchasable {
     producer.level = data.level;
     producer.unlocked = data.unlocked;
     producer.visible = data.visible;
-    producer.productionMultiplier = BigNumber.deserialize(data.productionMultiplier);
+    producer.productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
     return producer;
   }
 
@@ -233,7 +233,7 @@ export class Upgrade extends Purchasable {
 
     // Apply to all producers
     if (this.target.type === 'all_producers') {
-      Object.values(gameState.producers).forEach((producer: any) => {
+      Object.values(gameState.producers).forEach((producer: Producer) => {
         producer.applyBoost(effect);
       });
     }
@@ -277,7 +277,7 @@ export class Upgrade extends Purchasable {
   static deserialize(data: SerializedData, config: UpgradeConfig): Upgrade {
     const upgrade = new Upgrade(data.id, config);
     upgrade.level = data.level;
-    upgrade.purchased = data.purchased;
+    upgrade.purchased = data.purchased ?? false;
     upgrade.unlocked = data.unlocked;
     upgrade.visible = data.visible;
     return upgrade;

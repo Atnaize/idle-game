@@ -173,7 +173,7 @@ export class Resource extends Entity {
 
   static deserialize(data: SerializedData, config: ResourceConfig): Resource {
     const resource = new Resource(data.id, config);
-    resource._amount = BigNumber.deserialize(data.amount);
+    resource._amount = BigNumber.deserialize(data.amount ?? '0');
     resource.unlocked = data.unlocked;
     resource.visible = data.visible;
     return resource;

@@ -8,15 +8,6 @@ export function ClickArea() {
   const [clickEffect, setClickEffect] = useState<{ x: number; y: number; amount: string; id: number; wasCrit: boolean } | null>(null);
   const [clickId, setClickId] = useState(0);
 
-  if (!engine?.clickPower) {
-    return null;
-  }
-
-  const clickValue = engine.clickPower.getClickValue();
-  const critChance = engine.clickPower.critChance;
-  const critMultiplier = engine.clickPower.critMultiplier;
-  const hasCritChance = critChance > 0;
-
   const onClickArea = useCallback((e: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
     const result = handleClick();
 
@@ -58,6 +49,16 @@ export function ClickArea() {
       setClickEffect(null);
     }, 1000);
   }, [handleClick, clickId]);
+
+  // Early return AFTER all hooks
+  if (!engine?.clickPower) {
+    return null;
+  }
+
+  const clickValue = engine.clickPower.getClickValue();
+  const critChance = engine.clickPower.critChance;
+  const critMultiplier = engine.clickPower.critMultiplier;
+  const hasCritChance = critChance > 0;
 
   return (
     <button
