@@ -15,3 +15,4 @@ export { Header } from './Header';
 export { BottomNavigation } from './BottomNavigation';
 export { SettingsMenu } from './SettingsMenu';
 export { ErrorBoundary } from './ErrorBoundary';
+export { OfflineProgressModal } from './OfflineProgressModal';

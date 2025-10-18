@@ -14,6 +14,12 @@ import { GAME_CONFIG } from '../constants/gameConfig';
  */
 export function useGameLoop(onTick: () => void, enabled: boolean = true) {
   const intervalRef = useRef<number | null>(null);
+  const tickRef = useRef(onTick);
+
+  // Keep tick function ref updated
+  useEffect(() => {
+    tickRef.current = onTick;
+  }, [onTick]);
 
   useEffect(() => {
     if (!enabled) {
@@ -22,7 +28,7 @@ export function useGameLoop(onTick: () => void, enabled: boolean = true) {
 
     // Start the interval
     intervalRef.current = window.setInterval(() => {
-      onTick();
+      tickRef.current();
     }, GAME_CONFIG.UI.TICK_UPDATE_INTERVAL_MS);
 
     // Cleanup function - critical to prevent memory leaks
@@ -32,5 +38,5 @@ export function useGameLoop(onTick: () => void, enabled: boolean = true) {
         intervalRef.current = null;
       }
     };
-  }, [onTick, enabled]);
+  }, [enabled]); // Only depend on enabled, not onTick
 }

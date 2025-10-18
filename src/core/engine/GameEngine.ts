@@ -499,13 +499,20 @@ export class GameEngine {
    * Deserialize game state from save data
    * This method restores the saved state into the current entities
    * Must be called after all entities have been added to the engine
+   * Returns offline progress info for display
    */
-  deserialize(saveData: SaveData): void {
+  deserialize(saveData: SaveData): { timeAway: number; maxOfflineTime: number } {
     // Validate save version
     if (saveData.version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
       console.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${saveData.version}`);
       // In the future, implement migration logic here
     }
+
+    console.log('Deserializing:', {
+      resources: Object.keys(saveData.resources).length,
+      producers: Object.keys(saveData.producers).length,
+      achievements: Object.keys(saveData.achievements).length,
+    });
 
     // Restore resources
     Object.entries(saveData.resources).forEach(([id, data]) => {
@@ -516,6 +523,8 @@ export class GameEngine {
         }
         resource.unlocked = data.unlocked;
         resource.visible = data.visible;
+      } else {
+        console.warn(`Resource ${id} not found`);
       }
     });
 
@@ -526,10 +535,13 @@ export class GameEngine {
         producer.level = data.level;
         producer.unlocked = data.unlocked;
         producer.visible = data.visible;
+        console.log(`Restored producer ${id}: level=${data.level}`);
         if (data.productionMultiplier) {
           // Access private field through type assertion
           (producer as any).productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
         }
+      } else {
+        console.warn(`Producer ${id} not found`);
       }
     });
 
@@ -582,6 +594,8 @@ export class GameEngine {
     // Calculate offline progress
     const now = Date.now();
     const timeAway = (now - saveData.timestamp) / 1000; // Convert to seconds
+    const maxOfflineTime = this.offlineProgressLimit / 1000; // Convert to seconds
+
     if (timeAway > 5) { // Only if more than 5 seconds away
       this.calculateOfflineProgress(timeAway);
       console.log(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
@@ -589,5 +603,7 @@ export class GameEngine {
 
     // Invalidate context to force rebuild with new state
     this.invalidateContext();
+
+    return { timeAway, maxOfflineTime };
   }
 }

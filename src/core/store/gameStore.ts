@@ -10,6 +10,11 @@ import { createPrestige } from '@features/prestige';
 import { TABS, type TabId } from '@shared/config';
 import type { BuyAmount, ProducerId, UpgradeId } from '@core/types';
 
+interface OfflineProgressInfo {
+  timeAway: number;
+  maxOfflineTime: number;
+}
+
 interface GameState {
   // Game engine instance
   engine: GameEngine | null;
@@ -17,6 +22,10 @@ interface GameState {
   // UI state
   buyAmount: BuyAmount;
   selectedTab: TabId;
+
+  // Offline progress modal
+  offlineProgress: OfflineProgressInfo | null;
+  dismissOfflineProgress: () => void;
 
   // Initialization
   initialized: boolean;
@@ -49,6 +58,10 @@ export const useGameStore = create<GameState>()(
       selectedTab: TABS.PRODUCERS,
       initialized: false,
       tick: 0,
+      offlineProgress: null,
+
+      // Offline progress
+      dismissOfflineProgress: () => set({ offlineProgress: null }),
 
       // Initialize game
       initializeGame: () => {
@@ -218,13 +231,18 @@ export const useGameStore = create<GameState>()(
 
         const saveData = engine.serialize();
         localStorage.setItem('idle-game-save', JSON.stringify(saveData));
-        // Game saved to localStorage
+        console.log('Game saved:', {
+          producers: Object.keys(saveData.producers).length,
+          achievements: Object.keys(saveData.achievements).length,
+          timestamp: new Date(saveData.timestamp).toLocaleString(),
+        });
       },
 
       loadGame: () => {
         try {
           const savedData = localStorage.getItem('idle-game-save');
           if (!savedData) {
+            console.log('No save data found');
             return;
           }
 
@@ -235,7 +253,18 @@ export const useGameStore = create<GameState>()(
           }
 
           const saveData = JSON.parse(savedData);
-          engine.deserialize(saveData);
+          console.log('Loading game:', {
+            producers: Object.keys(saveData.producers || {}).length,
+            achievements: Object.keys(saveData.achievements || {}).length,
+            timestamp: new Date(saveData.timestamp).toLocaleString(),
+          });
+
+          const offlineInfo = engine.deserialize(saveData);
+
+          // Show offline progress modal if away for more than 5 seconds
+          if (offlineInfo.timeAway > 5) {
+            set({ offlineProgress: offlineInfo });
+          }
 
           // Force UI update
           get().forceTick();
@@ -256,7 +285,7 @@ export const useGameStore = create<GameState>()(
       },
     }),
     {
-      name: 'idle-game-storage',
+      name: 'idle-game-ui-state',
       partialize: (state) => ({
         // Only persist UI state, not the engine
         buyAmount: state.buyAmount,

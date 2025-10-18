@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useGameStore } from '@core/store';
 import { useTheme, useMobileLayout } from '@shared/hooks';
 import { useGameLoop, useAutoSave } from '@core/hooks';
-import { Header, BottomNavigation } from '@shared/components';
+import { Header, BottomNavigation, OfflineProgressModal } from '@shared/components';
 import { ResourceDisplay } from '@features/resources';
 import { ClickArea } from '@features/click';
 import { ProducersTab } from '@features/producers';
@@ -11,9 +11,19 @@ import { AchievementsTab } from '@features/achievements';
 import { PrestigeTab } from '@features/prestige';
 import { ToastContainer } from '@features/notifications';
 import { TABS } from '@shared/config';
+import { GAME_CONFIG } from '@core/constants/gameConfig';
 
 function App() {
-  const { initialized, initializeGame, selectedTab, tick, forceTick, saveGame } = useGameStore();
+  const {
+    initialized,
+    initializeGame,
+    selectedTab,
+    tick,
+    forceTick,
+    saveGame,
+    offlineProgress,
+    dismissOfflineProgress,
+  } = useGameStore();
   const layout = useMobileLayout();
 
   // Initialize theme system
@@ -49,6 +59,16 @@ function App() {
     <div className="h-screen flex flex-col pattern-radial-space overflow-hidden">
       {/* Toast notifications */}
       <ToastContainer />
+
+      {/* Offline Progress Modal */}
+      {offlineProgress && (
+        <OfflineProgressModal
+          isOpen={true}
+          onClose={dismissOfflineProgress}
+          timeAway={offlineProgress.timeAway}
+          maxOfflineTime={offlineProgress.maxOfflineTime}
+        />
+      )}
 
       <div id="app-wrapper" className="h-full flex flex-col transition-all duration-300 overflow-hidden">
         {/* Fixed Header */}

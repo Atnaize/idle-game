@@ -12,6 +12,12 @@ import { GAME_CONFIG } from '../constants/gameConfig';
  */
 export function useAutoSave(onSave: () => void, enabled: boolean = true) {
   const intervalRef = useRef<number | null>(null);
+  const saveRef = useRef(onSave);
+
+  // Keep save function ref updated
+  useEffect(() => {
+    saveRef.current = onSave;
+  }, [onSave]);
 
   useEffect(() => {
     if (!enabled) {
@@ -20,7 +26,7 @@ export function useAutoSave(onSave: () => void, enabled: boolean = true) {
 
     // Start the auto-save interval
     intervalRef.current = window.setInterval(() => {
-      onSave();
+      saveRef.current();
     }, GAME_CONFIG.ENGINE.AUTO_SAVE_INTERVAL_MS);
 
     // Cleanup function - critical to prevent memory leaks
@@ -30,5 +36,5 @@ export function useAutoSave(onSave: () => void, enabled: boolean = true) {
         intervalRef.current = null;
       }
     };
-  }, [onSave, enabled]);
+  }, [enabled]); // Only depend on enabled, not onSave
 }
