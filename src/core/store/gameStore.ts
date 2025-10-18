@@ -128,6 +128,9 @@ export const useGameStore = create<GameState>()(
         // UI update loop is now managed by useGameLoop hook in App.tsx
         // Auto-save is now managed by useAutoSave hook in App.tsx
 
+        // Try to load saved game
+        get().loadGame();
+
         // Game initialization complete
       },
 
@@ -225,9 +228,19 @@ export const useGameStore = create<GameState>()(
             return;
           }
 
-          // For now, we'll handle loading on next initialization
-          // Full deserialization would require factories for each class type
-          // Save data found, but deserialization not yet implemented
+          const { engine } = get();
+          if (!engine) {
+            console.warn('Cannot load game: engine not initialized');
+            return;
+          }
+
+          const saveData = JSON.parse(savedData);
+          engine.deserialize(saveData);
+
+          // Force UI update
+          get().forceTick();
+
+          console.log('Game loaded successfully');
         } catch (error) {
           console.error('Failed to load game:', error);
         }

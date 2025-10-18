@@ -494,4 +494,100 @@ export class GameEngine {
       stats: this.stats,
     };
   }
+
+  /**
+   * Deserialize game state from save data
+   * This method restores the saved state into the current entities
+   * Must be called after all entities have been added to the engine
+   */
+  deserialize(saveData: SaveData): void {
+    // Validate save version
+    if (saveData.version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
+      console.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${saveData.version}`);
+      // In the future, implement migration logic here
+    }
+
+    // Restore resources
+    Object.entries(saveData.resources).forEach(([id, data]) => {
+      const resource = this.resources[id];
+      if (resource) {
+        if (data.amount) {
+          resource.amount = BigNumber.deserialize(data.amount);
+        }
+        resource.unlocked = data.unlocked;
+        resource.visible = data.visible;
+      }
+    });
+
+    // Restore producers
+    Object.entries(saveData.producers).forEach(([id, data]) => {
+      const producer = this.producers[id];
+      if (producer) {
+        producer.level = data.level;
+        producer.unlocked = data.unlocked;
+        producer.visible = data.visible;
+        if (data.productionMultiplier) {
+          // Access private field through type assertion
+          (producer as any).productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
+        }
+      }
+    });
+
+    // Restore upgrades
+    Object.entries(saveData.upgrades).forEach(([id, data]) => {
+      const upgrade = this.upgrades[id];
+      if (upgrade) {
+        upgrade.level = data.level;
+        upgrade.unlocked = data.unlocked;
+        upgrade.visible = data.visible;
+        if (data.purchased !== undefined) {
+          (upgrade as any).purchased = data.purchased;
+        }
+      }
+    });
+
+    // Restore achievements
+    Object.entries(saveData.achievements).forEach(([id, data]) => {
+      const achievement = this.achievements[id];
+      if (achievement) {
+        achievement.unlocked = data.unlocked;
+        achievement.visible = data.visible;
+        if (data.completed !== undefined) {
+          (achievement as any).completed = data.completed;
+        }
+        if (data.progress !== undefined) {
+          (achievement as any).progress = data.progress;
+        }
+      }
+    });
+
+    // Restore click power
+    if (saveData.clickPower && this.clickPower) {
+      this.clickPower.level = saveData.clickPower.level;
+      this.clickPower.unlocked = saveData.clickPower.unlocked;
+      this.clickPower.visible = saveData.clickPower.visible;
+    }
+
+    // Restore prestige
+    if (saveData.prestige && this.prestige) {
+      (this.prestige as any).prestigePoints = BigNumber.deserialize(saveData.prestige.points);
+      (this.prestige as any).totalResets = saveData.prestige.totalResets;
+    }
+
+    // Restore stats
+    if (saveData.stats) {
+      this.stats = { ...saveData.stats };
+    }
+
+    // Calculate offline progress
+    const now = Date.now();
+    const timeAway = (now - saveData.timestamp) / 1000; // Convert to seconds
+    if (timeAway > 5) { // Only if more than 5 seconds away
+      this.calculateOfflineProgress(timeAway);
+      console.log(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
+    }
+
+    // Invalidate context to force rebuild with new state
+    this.invalidateContext();
+  }
 }
