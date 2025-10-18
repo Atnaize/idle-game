@@ -10,7 +10,7 @@ type Page = 'menu' | 'designSystem' | 'version' | 'credits';
 export function SettingsMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('menu');
-  const { engine } = useGameStore();
+  const { engine, saveGame, loadGame } = useGameStore();
 
   const giveDebugCredits = () => {
     if (!engine) return;
@@ -21,6 +21,16 @@ export function SettingsMenu() {
     });
 
     // Don't close the menu - let user add more if needed
+  };
+
+  const handleManualSave = () => {
+    saveGame();
+    console.log('Manual save triggered');
+  };
+
+  const handleTestLoad = () => {
+    loadGame();
+    console.log('Manual load triggered');
   };
 
   const closePage = () => {
@@ -78,13 +88,33 @@ export function SettingsMenu() {
               </button>
 
               <div className="border-t-2 border-helix-amber border-opacity-30 pt-3 mt-4 space-y-2">
+                <div className="text-sm text-tech-amber font-bold mb-2">Debug Tools</div>
+
                 <button
                   onClick={giveDebugCredits}
                   className="w-full text-left px-4 py-3 rounded-lg text-tech-amber bg-tech-amber bg-opacity-10 hover:bg-opacity-20 transition-all border-2 border-tech-amber border-opacity-50 hover:border-opacity-100 font-bold"
                 >
                   <div className="text-2xl mb-1">💰</div>
-                  <div>Debug: Add 1M Resources</div>
+                  <div>Add 1M Resources</div>
                   <div className="text-xs opacity-80 mt-1">For testing purposes</div>
+                </button>
+
+                <button
+                  onClick={handleManualSave}
+                  className="w-full text-left px-4 py-3 rounded-lg text-green-400 bg-green-400 bg-opacity-10 hover:bg-opacity-20 transition-all border-2 border-green-400 border-opacity-50 hover:border-opacity-100 font-bold"
+                >
+                  <div className="text-2xl mb-1">💾</div>
+                  <div>Manual Save</div>
+                  <div className="text-xs opacity-80 mt-1">Test save system</div>
+                </button>
+
+                <button
+                  onClick={handleTestLoad}
+                  className="w-full text-left px-4 py-3 rounded-lg text-blue-400 bg-blue-400 bg-opacity-10 hover:bg-opacity-20 transition-all border-2 border-blue-400 border-opacity-50 hover:border-opacity-100 font-bold"
+                >
+                  <div className="text-2xl mb-1">📂</div>
+                  <div>Test Load</div>
+                  <div className="text-xs opacity-80 mt-1">Reload from save</div>
                 </button>
               </div>
             </div>

@@ -13,15 +13,15 @@ export interface PrestigeResult {
  * Uses strategy pattern for flexible formula configuration
  */
 export class Prestige {
-  id: string;
-  name: string;
-  description: string;
-  minRequirement: BigNumber;
-  currencyId: string;
-  formulaStrategy: PrestigeFormulaStrategy;
-  bonusPerPoint: number;
-  keepProducers: string[];
-  keepUpgrades: string[];
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly minRequirement: BigNumber;
+  readonly currencyId: string;
+  readonly formulaStrategy: PrestigeFormulaStrategy;
+  readonly bonusPerPoint: number;
+  readonly keepProducers: string[];
+  readonly keepUpgrades: string[];
   prestigePoints: BigNumber;
   totalResets: number;
 

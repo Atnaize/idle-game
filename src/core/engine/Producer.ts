@@ -14,10 +14,10 @@ import type {
  * Producer Entity - Generates resources over time
  */
 export class Producer extends Purchasable {
-  baseProduction: Production;
+  readonly baseProduction: Production;
   productionMultiplier: BigNumber;
-  unlockCondition: UnlockCondition | null;
-  tier: number;
+  readonly unlockCondition: UnlockCondition | null;
+  readonly tier: number;
 
   constructor(id: string, config: ProducerConfig) {
     super(id, config, 'producer');
@@ -166,16 +166,16 @@ export class Producer extends Purchasable {
  * Upgrade Entity - Permanent improvements to game mechanics
  */
 export class Upgrade extends Purchasable {
-  effectType: 'multiplier' | 'additive' | 'flat';
-  effectValue: number;
-  target: UpgradeTarget | ((gameState: GameContext, effect: BigNumber) => void) | null;
-  unlockCondition: UnlockCondition | null;
+  readonly effectType: 'multiplier' | 'additive' | 'flat';
+  readonly effectValue: number;
+  readonly target: UpgradeTarget | ((gameState: GameContext, effect: BigNumber) => void) | null;
+  readonly unlockCondition: UnlockCondition | null;
   purchased: boolean;
 
   constructor(id: string, config: UpgradeConfig) {
-    super(id, config, 'upgrade');
+    // Ensure maxLevel defaults to 1 for upgrades (passed to parent)
+    super(id, { ...config, maxLevel: config.maxLevel ?? 1 }, 'upgrade');
 
-    this.maxLevel = config.maxLevel || 1;
     this.effectType = config.effectType || 'multiplier';
     this.effectValue = config.effectValue || 2;
     this.target = config.target || null;

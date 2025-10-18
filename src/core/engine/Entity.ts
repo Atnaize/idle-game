@@ -13,11 +13,11 @@ import type {
  * Base Entity class for all game objects
  */
 export abstract class Entity {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  type: string;
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly icon: string;
+  readonly type: string;
   unlocked: boolean;
   visible: boolean;
 
@@ -73,7 +73,7 @@ export abstract class Entity {
 export class Resource extends Entity {
   private _amount: BigNumber;
   maxAmount: BigNumber | null;
-  color: string;
+  readonly color: string;
 
   constructor(id: string, config: ResourceConfig) {
     super(id, config, 'resource');
@@ -199,9 +199,9 @@ export class Resource extends Entity {
  */
 export abstract class Purchasable extends Entity {
   level: number;
-  baseCost: Cost;
-  costMultiplier: number;
-  maxLevel: number;
+  readonly baseCost: Cost;
+  readonly costMultiplier: number;
+  readonly maxLevel: number;
 
   constructor(id: string, config: PurchasableConfig, type: string = 'purchasable') {
     super(id, config, type);
