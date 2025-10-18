@@ -1,11 +1,11 @@
 /**
  * Prestige Configuration
- * Defines prestige system
+ * Defines prestige system with configurable formula
  */
 
 import { BigNumber } from '@engine/BigNumber';
 import { Prestige } from '@engine/Prestige';
-import { Formulas } from '@utils/Formulas';
+import { PrestigeFormulaFactory } from '@utils/PrestigeFormulas';
 import { RESOURCES } from './resources.config';
 
 // Prestige ID constants
@@ -15,19 +15,28 @@ export const PRESTIGE = {
 
 export type PrestigeId = typeof PRESTIGE[keyof typeof PRESTIGE];
 
+// Prestige configuration
+export const PRESTIGE_CONFIG = {
+  minRequirement: '1e12', // 1 trillion ore
+  formula: 'cubic', // Options: 'linear', 'sqrt', 'cubic', 'logarithmic'
+  bonusPerPoint: 0.1, // 10% per prestige point
+} as const;
+
 // Prestige factory function
 export const createPrestige = () => {
-  return new Prestige(PRESTIGE.PRESTIGE, {
-    name: 'Prestige',
-    description: 'Reset progress for permanent production bonuses',
-    minRequirement: BigNumber.from('1e12'), // 1 trillion ore
-    currencyId: RESOURCES.ORE,
-    formula: (amount: BigNumber) => {
-      // Cubic root formula: more balanced progression
-      return Formulas.cubicPrestige(amount, BigNumber.from('1e12'));
+  const formulaStrategy = PrestigeFormulaFactory.getFormula(PRESTIGE_CONFIG.formula);
+
+  return new Prestige(
+    PRESTIGE.PRESTIGE,
+    {
+      name: 'Prestige',
+      description: 'Reset progress for permanent production bonuses',
+      minRequirement: BigNumber.from(PRESTIGE_CONFIG.minRequirement),
+      currencyId: RESOURCES.ORE,
+      bonusPerPoint: PRESTIGE_CONFIG.bonusPerPoint,
+      keepProducers: [],
+      keepUpgrades: [],
     },
-    bonusPerPoint: 0.1, // 10% per prestige point
-    keepProducers: [],
-    keepUpgrades: [],
-  });
+    formulaStrategy
+  );
 };

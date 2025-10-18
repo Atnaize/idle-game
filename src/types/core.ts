@@ -106,7 +106,6 @@ export interface PrestigeConfig {
   description: string;
   minRequirement: BigNumber | number | string;
   currencyId: ResourceId;
-  formula: (amount: BigNumber) => BigNumber;
   bonusPerPoint?: number;
   keepProducers?: ProducerId[];
   keepUpgrades?: UpgradeId[];

@@ -1,5 +1,6 @@
 import { BigNumber } from './BigNumber';
 import type { PrestigeConfig, GameContext, SerializedData } from '@/types/core';
+import type { PrestigeFormulaStrategy } from '@utils/PrestigeFormulas';
 
 export interface PrestigeResult {
   newState: GameContext;
@@ -9,6 +10,7 @@ export interface PrestigeResult {
 
 /**
  * Prestige - Reset progress for permanent bonuses
+ * Uses strategy pattern for flexible formula configuration
  */
 export class Prestige {
   id: string;
@@ -16,20 +18,20 @@ export class Prestige {
   description: string;
   minRequirement: BigNumber;
   currencyId: string;
-  formula: (amount: BigNumber) => BigNumber;
+  formulaStrategy: PrestigeFormulaStrategy;
   bonusPerPoint: number;
   keepProducers: string[];
   keepUpgrades: string[];
   prestigePoints: BigNumber;
   totalResets: number;
 
-  constructor(id: string, config: PrestigeConfig) {
+  constructor(id: string, config: PrestigeConfig, formulaStrategy: PrestigeFormulaStrategy) {
     this.id = id;
     this.name = config.name;
     this.description = config.description;
     this.minRequirement = BigNumber.from(config.minRequirement);
     this.currencyId = config.currencyId;
-    this.formula = config.formula;
+    this.formulaStrategy = formulaStrategy;
     this.bonusPerPoint = config.bonusPerPoint || 0.01;
     this.keepProducers = config.keepProducers || [];
     this.keepUpgrades = config.keepUpgrades || [];
@@ -59,11 +61,7 @@ export class Prestige {
     }
 
     const amount = currency.amount;
-    if (amount.lt(this.minRequirement)) {
-      return BigNumber.zero();
-    }
-
-    return this.formula(amount);
+    return this.formulaStrategy.calculate(amount, this.minRequirement);
   }
 
   /**
@@ -151,8 +149,12 @@ export class Prestige {
     };
   }
 
-  static deserialize(data: SerializedData, config: PrestigeConfig): Prestige {
-    const prestige = new Prestige(data.id, config);
+  static deserialize(
+    data: SerializedData,
+    config: PrestigeConfig,
+    formulaStrategy: PrestigeFormulaStrategy
+  ): Prestige {
+    const prestige = new Prestige(data.id, config, formulaStrategy);
     prestige.prestigePoints = BigNumber.deserialize((data.prestigePoints as string) || '0');
     prestige.totalResets = (data.totalResets as number) || 0;
     return prestige;

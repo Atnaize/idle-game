@@ -403,19 +403,22 @@ export const createClickPower = () => {
 // Click upgrades moved to clickPower.config.ts
 
 // ===== PRESTIGE =====
+// NOTE: This file is deprecated. Use prestige.config.ts instead
+
+import { CubicPrestigeFormula } from '@utils/PrestigeFormulas';
 
 export const createPrestige = () => {
-  return new Prestige('prestige', {
-    name: 'Prestige',
-    description: 'Reset progress for permanent production bonuses',
-    minRequirement: BigNumber.from('1e12'), // 1 trillion ore
-    currencyId: 'ore',
-    formula: (amount: BigNumber) => {
-      // Cubic root formula: more balanced progression
-      return Formulas.cubicPrestige(amount, BigNumber.from('1e12'));
+  return new Prestige(
+    'prestige',
+    {
+      name: 'Prestige',
+      description: 'Reset progress for permanent production bonuses',
+      minRequirement: BigNumber.from('1e12'), // 1 trillion ore
+      currencyId: 'ore',
+      bonusPerPoint: 0.1, // 10% per prestige point
+      keepProducers: [],
+      keepUpgrades: [],
     },
-    bonusPerPoint: 0.1, // 10% per prestige point
-    keepProducers: [],
-    keepUpgrades: [],
-  });
+    new CubicPrestigeFormula()
+  );
 };
