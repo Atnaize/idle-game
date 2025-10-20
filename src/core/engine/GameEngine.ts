@@ -6,9 +6,7 @@ import type {
   ProducerId,
   UpgradeId,
   AchievementId,
-  SaveData,
   GameStats,
-  SerializedData,
 } from '@core/types';
 import type { Resource } from './Entity';
 import type { Producer, Upgrade } from './Producer';
@@ -16,7 +14,7 @@ import type { Achievement } from './Achievement';
 import type { ClickPower } from './ClickPower';
 import type { Prestige } from './Prestige';
 import { RESOURCES } from '@features/resources/config/resources.config';
-import { GAME_CONFIG, DERIVED_CONFIG } from '../constants/gameConfig';
+import { GAME_CONFIG } from '../constants/gameConfig';
 
 export interface GameEngineConfig {
   targetFPS?: number;
@@ -493,206 +491,8 @@ export class GameEngine {
    * Mark context as dirty to force rebuild on next access
    * Call this after any state change that affects game context
    */
-  private invalidateContext(): void {
+  invalidateContext(): void {
     this._contextDirty = true;
   }
 
-  /**
-   * Serialize game state for saving
-   */
-  serialize(): SaveData {
-    const resources: Record<ResourceId, SerializedData> = {};
-    Object.entries(this.resources).forEach(([id, resource]) => {
-      resources[id] = resource.serialize();
-    });
-
-    const producers: Record<ProducerId, SerializedData> = {};
-    Object.entries(this.producers).forEach(([id, producer]) => {
-      producers[id] = producer.serialize();
-    });
-
-    const upgrades: Record<UpgradeId, SerializedData> = {};
-    Object.entries(this.upgrades).forEach(([id, upgrade]) => {
-      upgrades[id] = upgrade.serialize();
-    });
-
-    const achievements: Record<AchievementId, SerializedData> = {};
-    Object.entries(this.achievements).forEach(([id, achievement]) => {
-      achievements[id] = achievement.serialize();
-    });
-
-    return {
-      version: '1.0.0',
-      timestamp: Date.now(),
-      resources,
-      producers,
-      upgrades,
-      achievements,
-      clickPower: this.clickPower?.serialize(),
-      prestige: this.prestige?.serialize() ? {
-        points: this.prestige.prestigePoints.serialize(),
-        totalResets: this.prestige.totalResets,
-      } : undefined,
-      stats: this.stats,
-    };
-  }
-
-  /**
-   * Validate save data version and log warning if mismatch
-   */
-  private validateSaveVersion(version: string): void {
-    if (version !== GAME_CONFIG.SAVE.CURRENT_VERSION) {
-      Logger.warn(`Save version mismatch: expected ${GAME_CONFIG.SAVE.CURRENT_VERSION}, got ${version}`);
-      // TODO: Implement migration logic for version updates
-    }
-  }
-
-  /**
-   * Restore resources from save data
-   */
-  private deserializeResources(resourcesData: Record<ResourceId, SerializedData>): void {
-    Object.entries(resourcesData).forEach(([id, data]) => {
-      const resource = this.resources[id];
-      if (resource) {
-        if (data.amount) {
-          resource.amount = BigNumber.deserialize(data.amount);
-        }
-        resource.unlocked = data.unlocked;
-        resource.visible = data.visible;
-      } else {
-        Logger.warn(`Resource ${id} not found during deserialization`);
-      }
-    });
-  }
-
-  /**
-   * Restore producers from save data
-   */
-  private deserializeProducers(producersData: Record<ProducerId, SerializedData>): void {
-    Object.entries(producersData).forEach(([id, data]) => {
-      const producer = this.producers[id];
-      if (producer) {
-        producer.level = data.level;
-        producer.unlocked = data.unlocked;
-        producer.visible = data.visible;
-        Logger.debug(`Restored producer ${id}: level=${data.level}`);
-        if (data.productionMultiplier) {
-          producer.productionMultiplier = BigNumber.deserialize(data.productionMultiplier as string);
-        }
-      } else {
-        Logger.warn(`Producer ${id} not found during deserialization`);
-      }
-    });
-  }
-
-  /**
-   * Restore upgrades from save data
-   */
-  private deserializeUpgrades(upgradesData: Record<UpgradeId, SerializedData>): void {
-    Object.entries(upgradesData).forEach(([id, data]) => {
-      const upgrade = this.upgrades[id];
-      if (upgrade) {
-        upgrade.level = data.level;
-        upgrade.unlocked = data.unlocked;
-        upgrade.visible = data.visible;
-        if (data.purchased !== undefined) {
-          upgrade.purchased = data.purchased;
-        }
-      }
-    });
-  }
-
-  /**
-   * Restore achievements from save data
-   */
-  private deserializeAchievements(achievementsData: Record<AchievementId, SerializedData>): void {
-    Object.entries(achievementsData).forEach(([id, data]) => {
-      const achievement = this.achievements[id];
-      if (achievement) {
-        achievement.unlocked = data.unlocked;
-        achievement.visible = data.visible;
-        if (data.completed !== undefined) {
-          achievement.completed = data.completed;
-        }
-        if (data.progress !== undefined) {
-          achievement.progress = data.progress;
-        }
-      }
-    });
-  }
-
-  /**
-   * Restore click power from save data
-   */
-  private deserializeClickPower(clickPowerData?: SerializedData): void {
-    if (clickPowerData && this.clickPower) {
-      this.clickPower.level = clickPowerData.level;
-      this.clickPower.unlocked = clickPowerData.unlocked;
-      this.clickPower.visible = clickPowerData.visible;
-    }
-  }
-
-  /**
-   * Restore prestige from save data
-   */
-  private deserializePrestige(prestigeData?: { points: string; totalResets: number }): void {
-    if (prestigeData && this.prestige) {
-      this.prestige.prestigePoints = BigNumber.deserialize(prestigeData.points);
-      this.prestige.totalResets = prestigeData.totalResets;
-    }
-  }
-
-  /**
-   * Calculate and return offline progress information
-   */
-  private processOfflineProgress(savedTimestamp: number): { timeAway: number; maxOfflineTime: number } {
-    const now = Date.now();
-    const timeAway = (now - savedTimestamp) / 1000; // Convert to seconds
-    const maxOfflineTime = this.offlineProgressLimit / 1000; // Convert to seconds
-
-    // Only calculate offline progress if away for more than configured threshold
-    if (timeAway > GAME_CONFIG.SAVE.MIN_OFFLINE_TIME_FOR_MODAL) {
-      this.calculateOfflineProgress(timeAway);
-      Logger.debug(`Offline progress calculated: ${Math.floor(timeAway / 60)} minutes away`);
-    }
-
-    return { timeAway, maxOfflineTime };
-  }
-
-  /**
-   * Deserialize game state from save data
-   * This method restores the saved state into the current entities
-   * Must be called after all entities have been added to the engine
-   * Returns offline progress info for display
-   */
-  deserialize(saveData: SaveData): { timeAway: number; maxOfflineTime: number } {
-    this.validateSaveVersion(saveData.version);
-
-    Logger.debug('Deserializing:', {
-      resources: Object.keys(saveData.resources).length,
-      producers: Object.keys(saveData.producers).length,
-      achievements: Object.keys(saveData.achievements).length,
-    });
-
-    // Restore all game entities
-    this.deserializeResources(saveData.resources);
-    this.deserializeProducers(saveData.producers);
-    this.deserializeUpgrades(saveData.upgrades);
-    this.deserializeAchievements(saveData.achievements);
-    this.deserializeClickPower(saveData.clickPower);
-    this.deserializePrestige(saveData.prestige);
-
-    // Restore game stats
-    if (saveData.stats) {
-      this.stats = { ...saveData.stats };
-    }
-
-    // Process offline progress and get timing information
-    const offlineInfo = this.processOfflineProgress(saveData.timestamp);
-
-    // Invalidate context to force rebuild with new state
-    this.invalidateContext();
-
-    return offlineInfo;
-  }
 }

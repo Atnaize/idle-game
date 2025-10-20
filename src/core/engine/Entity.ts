@@ -1,5 +1,6 @@
 import { BigNumber } from './BigNumber';
 import { GAME_CONFIG } from '@core/constants/gameConfig';
+import { CostStrategyFactory } from './strategies/CostStrategyFactory';
 import type {
   EntityConfig,
   ResourceConfig,
@@ -8,6 +9,7 @@ import type {
   GameContext,
   SerializedData,
 } from '@core/types';
+import type { CostStrategy, CostStrategyConfig } from './strategies';
 
 /**
  * Base Entity class for all game objects
@@ -202,6 +204,7 @@ export abstract class Purchasable extends Entity {
   readonly baseCost: Cost;
   readonly costMultiplier: number;
   readonly maxLevel: number;
+  private readonly costStrategy: CostStrategy;
 
   constructor(id: string, config: PurchasableConfig, type: string = 'purchasable') {
     super(id, config, type);
@@ -210,6 +213,27 @@ export abstract class Purchasable extends Entity {
     this.baseCost = this.normalizeCost(config.baseCost);
     this.costMultiplier = config.costMultiplier || 1.15;
     this.maxLevel = config.maxLevel || Infinity;
+
+    // Initialize cost strategy
+    this.costStrategy = this.initializeCostStrategy(config);
+  }
+
+  /**
+   * Initialize the cost strategy from config
+   */
+  private initializeCostStrategy(config: PurchasableConfig): CostStrategy {
+    // If explicit strategy provided, use it
+    if (config.costStrategy) {
+      // If it's already a CostStrategy instance, use it
+      if ('calculateCost' in config.costStrategy) {
+        return config.costStrategy as CostStrategy;
+      }
+      // Otherwise, it's a config object - create from factory
+      return CostStrategyFactory.create(config.costStrategy as CostStrategyConfig);
+    }
+
+    // Fallback to creating exponential strategy from costMultiplier
+    return CostStrategyFactory.createDefault(config.costMultiplier || 1.15);
   }
 
   /**
@@ -226,13 +250,8 @@ export abstract class Purchasable extends Entity {
   /**
    * Calculate the total cost for purchasing the next N levels
    *
-   * Uses geometric series formula for efficiency when purchasing multiple levels:
-   * Sum = base * start * (ratio - 1) / (multiplier - 1)
-   *
-   * Where:
-   * - base = baseCost for each resource
-   * - start = costMultiplier^currentLevel
-   * - ratio = costMultiplier^levels
+   * Delegates to the configured cost strategy for flexible cost curves.
+   * Supports exponential, linear, polynomial, step, and hybrid strategies.
    *
    * @param levels - Number of levels to purchase (default: 1)
    * @returns Cost object with resource requirements for all levels
@@ -245,34 +264,14 @@ export abstract class Purchasable extends Entity {
    * const bulkCost = producer.getNextCost(10); // { ore: BigNumber(1584) }
    */
   getNextCost(levels: number = 1): Cost {
-    const cost: Cost = {};
+    return this.costStrategy.calculateCost(this.baseCost, this.level, levels);
+  }
 
-    for (const [resourceId, baseAmount] of Object.entries(this.baseCost)) {
-      const base = BigNumber.from(baseAmount);
-      const currentLevel = this.level;
-
-      if (levels === 1) {
-        // Cost for next single level
-        cost[resourceId] = base.mul(BigNumber.from(this.costMultiplier).pow(currentLevel));
-      } else {
-        // Sum of costs for multiple levels (geometric series)
-        const multiplier = BigNumber.from(this.costMultiplier);
-        const start = multiplier.pow(currentLevel);
-        const ratio = multiplier.pow(levels);
-
-        if (this.costMultiplier === 1) {
-          cost[resourceId] = base.mul(levels);
-        } else {
-          // Sum = base * start * (ratio - 1) / (multiplier - 1)
-          cost[resourceId] = base
-            .mul(start)
-            .mul(ratio.sub(1))
-            .div(multiplier.sub(1));
-        }
-      }
-    }
-
-    return cost;
+  /**
+   * Get the cost strategy description (useful for debugging/UI)
+   */
+  getCostStrategyDescription(): string {
+    return this.costStrategy.getDescription();
   }
 
   /**

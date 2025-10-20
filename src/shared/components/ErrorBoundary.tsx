@@ -25,7 +25,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static getDerivedStateFromError(_error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true };
   }
 
@@ -71,7 +72,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 </div>
               </div>
 
-              {process.env.NODE_ENV === 'development' && this.state.errorInfo.componentStack && (
+              {import.meta.env.DEV && this.state.errorInfo.componentStack && (
                 <div>
                   <h2 className="text-lg font-semibold text-gray-200 mb-2">
                     Component Stack:

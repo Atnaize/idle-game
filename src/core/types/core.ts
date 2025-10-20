@@ -1,9 +1,14 @@
-import { BigNumber } from '@core/engine';
-import type { Resource } from '@core/engine';
-import type { Producer, Upgrade } from '@core/engine';
-import type { Achievement } from '@core/engine';
-import type { ClickPower } from '@core/engine';
-import type { Prestige } from '@core/engine';
+import {
+  BigNumber,
+  type Resource,
+  type Producer,
+  type Upgrade,
+  type Achievement,
+  type ClickPower,
+  type Prestige,
+  type CostStrategy,
+  type CostStrategyConfig,
+} from '@core/engine';
 
 /**
  * Core type definitions for the idle game
@@ -68,6 +73,7 @@ export interface ResourceConfig extends EntityConfig {
 export interface PurchasableConfig extends EntityConfig {
   baseCost: Cost;
   costMultiplier?: number;
+  costStrategy?: CostStrategy | CostStrategyConfig;
   maxLevel?: number;
 }
 

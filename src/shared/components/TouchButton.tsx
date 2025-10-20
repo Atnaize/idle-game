@@ -1,5 +1,4 @@
 import { ButtonHTMLAttributes, ReactNode, useCallback, useRef } from 'react';
-import { LAYOUT } from '@shared/constants/layout';
 
 interface TouchButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;

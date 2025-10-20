@@ -11,7 +11,6 @@ import { AchievementsTab } from '@features/achievements';
 import { PrestigeTab } from '@features/prestige';
 import { ToastContainer } from '@features/notifications';
 import { TABS } from '@shared/config';
-import { GAME_CONFIG } from '@core/constants/gameConfig';
 
 function App() {
   const {

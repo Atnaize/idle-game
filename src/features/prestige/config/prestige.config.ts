@@ -3,8 +3,7 @@
  * Defines prestige system with configurable formula
  */
 
-import { BigNumber } from '@core/engine';
-import { Prestige } from '@core/engine';
+import { BigNumber, Prestige } from '@core/engine';
 import { PrestigeFormulaFactory } from '@core/utils';
 import { RESOURCES } from '@features/resources/config/resources.config';
 

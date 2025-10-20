@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGameStore } from '@core/store';
 import { StyleShowcase } from './StyleShowcase';
 import { BigNumber } from '@core/engine';
+import { Logger } from '@core/utils';
 import { Modal, ModalContent, ModalFooter } from './Modal';
 import { TouchButton } from './TouchButton';
 
@@ -10,6 +11,7 @@ type Page = 'menu' | 'designSystem' | 'version' | 'credits';
 export function SettingsMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('menu');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const { engine, saveGame, loadGame } = useGameStore();
 
   const giveDebugCredits = () => {
@@ -25,12 +27,22 @@ export function SettingsMenu() {
 
   const handleManualSave = () => {
     saveGame();
-    console.log('Manual save triggered');
+    Logger.debug('Manual save triggered');
   };
 
   const handleTestLoad = () => {
     loadGame();
-    console.log('Manual load triggered');
+    Logger.debug('Manual load triggered');
+  };
+
+  const handleResetEverything = () => {
+    // Clear all localStorage
+    localStorage.clear();
+
+    Logger.info('Game reset: All data cleared');
+
+    // Reload the page to start fresh
+    window.location.reload();
   };
 
   const closePage = () => {
@@ -116,6 +128,15 @@ export function SettingsMenu() {
                   <div>Test Load</div>
                   <div className="text-xs opacity-80 mt-1">Reload from save</div>
                 </button>
+
+                <button
+                  onClick={() => setShowResetConfirm(true)}
+                  className="w-full text-left px-4 py-3 rounded-lg text-red-400 bg-red-400 bg-opacity-10 hover:bg-opacity-20 transition-all border-2 border-red-400 border-opacity-50 hover:border-opacity-100 font-bold"
+                >
+                  <div className="text-2xl mb-1">🗑️</div>
+                  <div>Reset Everything</div>
+                  <div className="text-xs opacity-80 mt-1">Clear all data & restart</div>
+                </button>
               </div>
             </div>
           )}
@@ -165,6 +186,48 @@ export function SettingsMenu() {
           >
             Close
           </TouchButton>
+        </ModalFooter>
+      </Modal>
+
+      {/* Reset Confirmation Modal */}
+      <Modal isOpen={showResetConfirm} onClose={() => setShowResetConfirm(false)} size="sm">
+        <ModalContent>
+          <div className="text-center py-4">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-red-400 mb-4">Reset Everything?</h2>
+            <p className="text-gray-300 mb-2">
+              This will <span className="text-red-400 font-bold">permanently delete</span> all your game progress:
+            </p>
+            <ul className="text-left text-gray-400 text-sm mb-4 space-y-1 bg-gray-800/50 rounded-lg p-4">
+              <li>• All resources</li>
+              <li>• All producers and upgrades</li>
+              <li>• All achievements</li>
+              <li>• Prestige points and stats</li>
+              <li>• Save data</li>
+            </ul>
+            <p className="text-yellow-400 text-sm font-semibold">
+              This action cannot be undone!
+            </p>
+          </div>
+        </ModalContent>
+
+        <ModalFooter>
+          <div className="flex gap-3 w-full">
+            <TouchButton
+              onClick={() => setShowResetConfirm(false)}
+              variant="secondary"
+              fullWidth
+            >
+              Cancel
+            </TouchButton>
+            <TouchButton
+              onClick={handleResetEverything}
+              variant="danger"
+              fullWidth
+            >
+              Reset Everything
+            </TouchButton>
+          </div>
         </ModalFooter>
       </Modal>
     </>

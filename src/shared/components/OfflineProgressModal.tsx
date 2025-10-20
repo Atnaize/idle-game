@@ -38,9 +38,11 @@ export const OfflineProgressModal: FC<OfflineProgressModalProps> = ({
   const wasCapped = timeAway > maxOfflineTime;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Welcome Back!">
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">Welcome Back!</h2>
+
           {/* Time away */}
           <div className="bg-gray-800/50 rounded-lg p-4">
             <div className="text-sm text-gray-400 mb-1">Time Away</div>

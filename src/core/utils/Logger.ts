@@ -13,6 +13,7 @@ export class Logger {
    */
   static debug(message: string, data?: unknown): void {
     if (this.isDevelopment) {
+      // eslint-disable-next-line no-console
       console.log(`[DEBUG] ${message}`, data ?? '');
     }
   }
@@ -22,6 +23,7 @@ export class Logger {
    * Use for important events and state changes
    */
   static info(message: string, data?: unknown): void {
+    // eslint-disable-next-line no-console
     console.log(`[INFO] ${message}`, data ?? '');
   }
 

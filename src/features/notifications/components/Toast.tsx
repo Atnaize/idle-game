@@ -10,6 +10,14 @@ interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   const [isExiting, setIsExiting] = useState(false);
 
+  const handleDismiss = React.useCallback(() => {
+    setIsExiting(true);
+    // Wait for exit animation to complete before removing
+    setTimeout(() => {
+      onDismiss(toast.id);
+    }, 300);
+  }, [toast.id, onDismiss]);
+
   useEffect(() => {
     const duration = toast.duration || 3000;
     const timer = setTimeout(() => {
@@ -17,15 +25,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [toast.id]);
-
-  const handleDismiss = () => {
-    setIsExiting(true);
-    // Wait for exit animation to complete before removing
-    setTimeout(() => {
-      onDismiss(toast.id);
-    }, 300);
-  };
+  }, [toast.id, toast.duration, handleDismiss]);
 
   const getTypeClass = () => {
     switch (toast.type) {

@@ -7,8 +7,8 @@ import {
   Achievement,
   MilestoneConditionStrategy,
   PurchaseConditionStrategy,
+  BigNumber,
 } from '@core/engine';
-import { BigNumber } from '@core/engine';
 import { RESOURCES } from '@features/resources/config/resources.config';
 import { PRODUCERS } from '@features/producers/config/producers.config';
 

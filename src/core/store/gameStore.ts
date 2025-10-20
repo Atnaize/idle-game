@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GameEngine, BigNumber } from '@core/engine';
+import { GameEngine, BigNumber, SaveManager } from '@core/engine';
 import { Logger } from '@core/utils';
 import { GAME_CONFIG } from '@core/constants/gameConfig';
 import { createResources } from '@features/resources';
@@ -9,6 +9,7 @@ import { createUpgrades } from '@features/upgrades';
 import { createAchievements } from '@features/achievements';
 import { createClickPower, createClickUpgrades } from '@features/click';
 import { createPrestige } from '@features/prestige';
+import { useToastStore } from '@features/notifications/store/toastStore';
 import { TABS, type TabId } from '@shared/config';
 import type { BuyAmount, ProducerId, UpgradeId } from '@core/types';
 
@@ -121,17 +122,13 @@ export const useGameStore = create<GameState>()(
 
         // Setup achievement completion callback for notifications
         engine.onAchievementComplete = (achievement) => {
-          // This will be imported from toast store
-          // For now, we'll add it after creating the toast integration
           if (typeof window !== 'undefined') {
             // Trigger toast notification
-            import('@features/notifications/store/toastStore').then(({ useToastStore }) => {
-              useToastStore.getState().showAchievement(
-                achievement.id,
-                achievement.name,
-                achievement.icon
-              );
-            });
+            useToastStore.getState().showAchievement(
+              achievement.id,
+              achievement.name,
+              achievement.icon
+            );
           }
         };
 
@@ -270,57 +267,38 @@ export const useGameStore = create<GameState>()(
       saveGame: () => {
         const { engine } = get();
         if (!engine) {
+          Logger.warn('Cannot save game: engine not initialized');
           return;
         }
 
-        const saveData = engine.serialize();
-        localStorage.setItem('idle-game-save', JSON.stringify(saveData));
-        Logger.debug('Game saved:', {
-          producers: Object.keys(saveData.producers).length,
-          achievements: Object.keys(saveData.achievements).length,
-          timestamp: new Date(saveData.timestamp).toLocaleString(),
-        });
+        SaveManager.save(engine);
       },
 
       loadGame: () => {
-        try {
-          const savedData = localStorage.getItem('idle-game-save');
-          if (!savedData) {
-            Logger.debug('No save data found');
-            return;
-          }
+        const { engine } = get();
+        if (!engine) {
+          Logger.warn('Cannot load game: engine not initialized');
+          return;
+        }
 
-          const { engine } = get();
-          if (!engine) {
-            Logger.warn('Cannot load game: engine not initialized');
-            return;
-          }
+        const result = SaveManager.load(engine);
 
-          const saveData = JSON.parse(savedData);
-          Logger.debug('Loading game:', {
-            producers: Object.keys(saveData.producers || {}).length,
-            achievements: Object.keys(saveData.achievements || {}).length,
-            timestamp: new Date(saveData.timestamp).toLocaleString(),
-          });
-
-          const offlineInfo = engine.deserialize(saveData);
-
+        if (result.success) {
           // Show offline progress modal if away for more than configured threshold
-          if (offlineInfo.timeAway > GAME_CONFIG.SAVE.MIN_OFFLINE_TIME_FOR_MODAL) {
-            set({ offlineProgress: offlineInfo });
+          if (
+            result.offlineInfo &&
+            result.offlineInfo.timeAway > GAME_CONFIG.SAVE.MIN_OFFLINE_TIME_FOR_MODAL
+          ) {
+            set({ offlineProgress: result.offlineInfo });
           }
 
           // Force UI update
           get().forceTick();
-
-          Logger.debug('Game loaded successfully');
-        } catch (error) {
-          Logger.error('Failed to load game:', error);
         }
       },
 
       resetGame: () => {
-        localStorage.removeItem('idle-game-save');
+        SaveManager.deleteSave();
         window.location.reload();
       },
 

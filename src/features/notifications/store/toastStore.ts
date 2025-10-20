@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Toast, ToastType, AchievementToast } from '@features/notifications/types/toast';
+import type { Toast, AchievementToast } from '@features/notifications/types/toast';
 
 interface ToastStore {
   toasts: Toast[];

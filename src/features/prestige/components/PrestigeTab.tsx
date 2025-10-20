@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useGameStore } from '@core/store';
 import { NumberFormatter } from '@core/utils';
-import { SectionCard } from '@shared/components';
-import { StatCard } from '@shared/components';
-import { Modal, ModalContent, ModalFooter } from '@shared/components';
-import { TouchButton } from '@shared/components';
+import {
+  SectionCard,
+  StatCard,
+  Modal,
+  ModalContent,
+  ModalFooter,
+  TouchButton,
+} from '@shared/components';
 
 export function PrestigeTab() {
   const { engine, performPrestige } = useGameStore();
