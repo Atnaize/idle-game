@@ -131,19 +131,14 @@ export const SKILL_CONNECTIONS: SkillConnection[] = [
   { from: CLICK_UPGRADES.CRIT_CHANCE_1, to: CLICK_UPGRADES.CRIT_MULTIPLIER_1, type: 'curved' },
 
   // Miner path
-  { from: UPGRADES.MINER_BOOST_1, to: UPGRADES.MINER_BOOST_2, type: 'direct' },
+  { from: UPGRADES.MINER_BOOST_1, to: UPGRADES.MINER_BOOST_2, type: 'curved' },
   { from: UPGRADES.MINER_BOOST_2, to: UPGRADES.GLOBAL_PRODUCTION_1, type: 'curved' },
 
   // Global path
-  { from: UPGRADES.GLOBAL_PRODUCTION_1, to: UPGRADES.GLOBAL_PRODUCTION_2, type: 'direct' },
-
-  // Drill path
-  { from: UPGRADES.DRILL_EFFICIENCY_1, to: UPGRADES.DRILL_SPEED_1, type: 'curved' },
-  { from: UPGRADES.DRILL_SPEED_1, to: UPGRADES.DRILL_DEPTH_1, type: 'curved' },
+  { from: UPGRADES.GLOBAL_PRODUCTION_1, to: UPGRADES.GLOBAL_PRODUCTION_2, type: 'curved' },
 
   // Convergence to prestige
   { from: UPGRADES.GLOBAL_PRODUCTION_2, to: UPGRADES.PRESTIGE_BONUS_1, type: 'curved' },
-  { from: UPGRADES.DRILL_DEPTH_1, to: UPGRADES.PRESTIGE_BONUS_1, type: 'curved' },
 ];
 
 /**

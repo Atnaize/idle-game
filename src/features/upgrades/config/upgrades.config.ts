@@ -102,62 +102,6 @@ export const createUpgrades = () => {
       },
     }),
 
-    // Drill upgrades
-    [UPGRADES.DRILL_EFFICIENCY_1]: new Upgrade(UPGRADES.DRILL_EFFICIENCY_1, {
-      name: 'Drill Bits',
-      description: 'Doubles drill production',
-      icon: '🔩',
-      baseCost: { [RESOURCES.ORE]: 5000 },
-      costMultiplier: 1,
-      maxLevel: 1,
-      effectType: 'multiplier',
-      effectValue: 2,
-      target: { type: 'producer', id: PRODUCERS.DRILL },
-      unlocked: false,
-      visible: true,
-      unlockCondition: (ctx: GameContext) => {
-        const drill = ctx.producers[PRODUCERS.DRILL];
-        return drill !== undefined && drill.level >= 1;
-      },
-    }),
-
-    [UPGRADES.DRILL_SPEED_1]: new Upgrade(UPGRADES.DRILL_SPEED_1, {
-      name: 'Hydraulic Systems',
-      description: 'Doubles all drill production',
-      icon: '💧',
-      baseCost: { [RESOURCES.ORE]: 25000 },
-      costMultiplier: 1,
-      maxLevel: 1,
-      effectType: 'multiplier',
-      effectValue: 2,
-      target: { type: 'category', category: 'drill' },
-      unlocked: false,
-      visible: true,
-      unlockCondition: (ctx: GameContext) => {
-        const upgrade = ctx.upgrades[UPGRADES.DRILL_EFFICIENCY_1];
-        return upgrade !== undefined && upgrade.purchased;
-      },
-    }),
-
-    [UPGRADES.DRILL_DEPTH_1]: new Upgrade(UPGRADES.DRILL_DEPTH_1, {
-      name: 'Deep Mining',
-      description: 'Unlocks deeper ore veins',
-      icon: '⬇️',
-      baseCost: { [RESOURCES.ORE]: 100000 },
-      costMultiplier: 1,
-      maxLevel: 1,
-      effectType: 'multiplier',
-      effectValue: 2,
-      target: { type: 'category', category: 'drill' },
-      unlocked: false,
-      visible: true,
-      unlockCondition: (ctx: GameContext) => {
-        const upgrade = ctx.upgrades[UPGRADES.DRILL_SPEED_1];
-        const drill = ctx.producers[PRODUCERS.DRILL];
-        return upgrade !== undefined && upgrade.purchased && drill !== undefined && drill.level >= 15;
-      },
-    }),
-
     // Prestige upgrades
     [UPGRADES.PRESTIGE_BONUS_1]: new Upgrade(UPGRADES.PRESTIGE_BONUS_1, {
       name: 'Quantum Efficiency',
